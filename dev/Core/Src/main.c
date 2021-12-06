@@ -14,14 +14,18 @@
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
+  * @author : Benjamin Chevais
+  *
   ******************************************************************************
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
 #include "dma2d.h"
 #include "i2c.h"
 #include "ltdc.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 #include "fmc.h"
@@ -29,6 +33,18 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "WeatherStation.h"
+#include "i2csensors.h"
+#include <stdio.h>
+#include <string.h>
+
+#ifdef __GNUC__
+/* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf
+set to 'Yes') calls __io_putchar() */
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else
+#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif /* __GNUC__ */
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -96,7 +112,16 @@ int main(void)
   MX_LTDC_Init();
   MX_USART1_UART_Init();
   MX_I2C1_Init();
+  MX_TIM5_Init();
+  MX_ADC3_Init();
+  MX_TIM1_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+
+  WeatherStationInit();
+
+  HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -106,6 +131,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
 	  HAL_GPIO_TogglePin (GPIOI, GPIO_PIN_1);
 	  HAL_Delay (1000);   /* Insert delay 100 ms */
   }
@@ -178,6 +204,31 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+PUTCHAR_PROTOTYPE
+{
+/* Place your implementation of fputc here */
+/* e.g. write a character to the USART2 and Loop until the end of transmission */
+	HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 100);
+
+	return ch;
+}
+
+void aggregate() {
+
+	double temperature = gettemp();
+	double humidity = gethumidity();
+	HAL_Delay(1000); // La pression ne veut pas se lire s'il n'y a pas ce delai
+	double pressure = getpressure();
+	//double rainfall = getrainfall(); // TODO
+	//double wspeed = getwspeed(); // TODO
+	//double wdir = getwdir(); // TODO
+
+	updateWeatherStation(&Weather_station, &Graphics_data, &Data_to_save, temperature, humidity, pressure, 0, 0, 0);
+
+	printf("temp :%f \r\n", (double)Weather_station.temperature);
+	printf("hum : %f \r\n", (double)Weather_station.humidity);
+	printf("press : %f \r\n", (double)Weather_station.pressure);
+}
 
 /* USER CODE END 4 */
 

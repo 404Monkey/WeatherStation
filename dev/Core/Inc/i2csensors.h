@@ -24,10 +24,8 @@ static float humidity_perc;
 static float temperature_degC;
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-static int32_t platform_write(void *handle, uint8_t reg, const uint8_t *bufp,
-		uint16_t len);
-static int32_t platform_read(void *handle, uint8_t reg, uint8_t *bufp,
-		uint16_t len);
+static int32_t platform_write(void *handle, uint8_t reg, const uint8_t *bufp, uint16_t len);
+static int32_t platform_read(void *handle, uint8_t reg, uint8_t *bufp, uint16_t len);
 
 
 /*
@@ -42,9 +40,9 @@ typedef struct {
 
 float linear_interpolation(lin_t *lin, int16_t x);
 
-int32_t gettemp ();
+double gettemp ();
 
-int32_t gethumidity ();
+double gethumidity ();
 
 
 #define    BOOT_TIME        5 //ms
@@ -70,5 +68,7 @@ static int32_t platform_write_LPS(void *handle, uint8_t reg, const uint8_t *bufp
                               uint16_t len);
 static int32_t platform_read_LPS(void *handle, uint8_t reg, uint8_t *bufp,
                              uint16_t len);
+
+double getpressure ();
 
 #endif /* INC_SENSOR_H_ */
