@@ -44,7 +44,7 @@ static int32_t platform_read(void *handle, uint8_t reg, uint8_t *bufp,
 }
 
 
-int32_t gettemp ()
+double gettemp ()
 {
 	stmdev_ctx_t dev_ctx;
 	dev_ctx.write_reg = platform_write;
@@ -76,11 +76,11 @@ int32_t gettemp ()
 
 
 	}
-	return((int32_t)temperature_degC);
+	return((double)temperature_degC);
 
 }
 
-int32_t gethumidity () {
+double gethumidity () {
 
 	stmdev_ctx_t dev_ctx;
 	dev_ctx.write_reg = platform_write;
@@ -115,7 +115,7 @@ int32_t gethumidity () {
 		if (humidity_perc > 100) {
 			humidity_perc = 100;
 		}
-		return((int32_t)humidity_perc);
+		return((double)humidity_perc);
 
 	}
 
@@ -148,7 +148,7 @@ static int32_t platform_read_LPS(void *handle, uint8_t reg, uint8_t *bufp,
 
 
 
-uint32_t getpressure ()
+double getpressure ()
 {
   stmdev_ctx_t dev_ctx;
   lps22hh_reg_t reg;
@@ -168,7 +168,7 @@ uint32_t getpressure ()
       memset(&data_raw_pressure, 0x00, sizeof(uint32_t));
       lps22hh_pressure_raw_get(&dev_ctx, &data_raw_pressure);
       pressure_hPa = lps22hh_from_lsb_to_hpa( data_raw_pressure);
-      return((int)pressure_hPa);
+      return((double)pressure_hPa);
     }
   }
 
