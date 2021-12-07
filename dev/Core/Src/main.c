@@ -46,6 +46,7 @@ set to 'Yes') calls __io_putchar() */
 #else
 #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
 #endif /* __GNUC__ */
+#include "Windspeed.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -66,6 +67,7 @@ set to 'Yes') calls __io_putchar() */
 
 /* USER CODE BEGIN PV */
 int DELAY = 5; //(htim5.Instance->ARR + 1) * (htim5.Instance->CCR1 + 1) * 5 *0.000000001; // * (1/200000000);
+double WIND_TICK = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -76,7 +78,13 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
+{
+	if (htim->Instance==TIM1)
+	{
+		WIND_TICK++;
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -126,6 +134,7 @@ int main(void)
   HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1);
 
   printf("démarrage du programme !\n");
+  HAL_TIM_IC_Start_IT(&htim1,TIM_CHANNEL_1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
