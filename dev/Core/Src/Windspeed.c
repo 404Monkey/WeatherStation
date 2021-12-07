@@ -6,6 +6,8 @@
    Produced by Theo Biardeau.
  **************************************************************/
 
+#include "Windspeed.h"
+
 // Give the wind speed
 double captureWindspeed(double *wind_tick, const int delay) {
 	double wind_speed =  (*wind_tick * 2.4)/delay;

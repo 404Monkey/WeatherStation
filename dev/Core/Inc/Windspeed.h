@@ -6,8 +6,8 @@
    Produced by Theo Biardeau.
  **************************************************************/
 
-#ifndef INC_WIND_SPEED_H_
-#define INC_WIND_SPEED_H_
+#ifndef INC_WINDSPEED_H_
+#define INC_WINDSPEED_H_
 
 // Give the wind speed
 double captureWindspeed (double *wind_tick, const int delay);
