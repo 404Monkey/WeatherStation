@@ -35,6 +35,7 @@
 
 #include "WeatherStation.h"
 #include "i2csensors.h"
+#include "Raingauge.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -64,7 +65,7 @@ set to 'Yes') calls __io_putchar() */
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+int DELAY = 5; //(htim5.Instance->ARR + 1) * (htim5.Instance->CCR1 + 1) * 5 *0.000000001; // * (1/200000000);
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -93,6 +94,7 @@ int main(void)
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
+  uint32_t test = HAL_RCC_GetSysClockFreq();
   /* USER CODE BEGIN Init */
 
   /* USER CODE END Init */
@@ -120,8 +122,10 @@ int main(void)
 
   WeatherStationInit();
 
+  RaingaugeStart(&htim2);
   HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1);
 
+  printf("démarrage du programme !\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -134,6 +138,7 @@ int main(void)
 
 	  HAL_GPIO_TogglePin (GPIOI, GPIO_PIN_1);
 	  HAL_Delay (1000);   /* Insert delay 100 ms */
+
   }
   /* USER CODE END 3 */
 }
@@ -219,15 +224,16 @@ void aggregate() {
 	double humidity = gethumidity();
 	HAL_Delay(1000); // La pression ne veut pas se lire s'il n'y a pas ce delai
 	double pressure = getpressure();
-	//double rainfall = getrainfall(); // TODO
+	double rainfall = RaingaugeCaptureRainfall(&htim2, DELAY);
 	//double wspeed = getwspeed(); // TODO
 	//double wdir = getwdir(); // TODO
 
-	updateWeatherStation(&Weather_station, &Graphics_data, &Data_to_save, temperature, humidity, pressure, 0, 0, 0);
+	updateWeatherStation(&Weather_station, &Graphics_data, &Data_to_save, temperature, humidity, pressure, rainfall, 0, 0);
 
 	printf("temp :%f \r\n", (double)Weather_station.temperature);
 	printf("hum : %f \r\n", (double)Weather_station.humidity);
 	printf("press : %f \r\n", (double)Weather_station.pressure);
+	printf("rain : %f \r\n", (double)Weather_station.rainfall);
 }
 
 /* USER CODE END 4 */

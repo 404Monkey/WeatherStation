@@ -42,7 +42,7 @@ T_DataToSave DataToSave(); // T_DataToSave constructor
 void addDataToSave(T_DataToSave * ds, float temp, float hum, float press, float rain, float wspeed, float wdir); // add all data to save
 void clearBuffers(T_DataToSave* ds);
 
-// Definition of the Wheather Station object
+// Definition of the Weather Station object
 typedef struct T_WeatherStation {
     float temperature;
     float humidity;
