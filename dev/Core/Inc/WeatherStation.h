@@ -3,6 +3,8 @@
 * @date 01/12/21
 */
 
+#pragma once
+
 #define GRAPHICS_SIZE 24 // size of the history arrays
 #define DATA_SIZE 100 // size of the history arrays
 

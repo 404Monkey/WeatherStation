@@ -35,6 +35,7 @@
 /* USER CODE BEGIN Includes */
 
 #include "WeatherStation.h"
+#include "draw_frame_graph.h"
 #include "i2csensors.h"
 #include "Raingauge.h"
 #include "Windspeed.h"
@@ -129,6 +130,8 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
 
+  init_screen();
+
   WeatherStationInit();
 
   RaingaugeStart(&htim2); // timer de la pluie
@@ -137,6 +140,9 @@ int main(void)
   HAL_RTC_Init(&hrtc);
 
   printf("démarrage du programme !\r\n");
+
+  display_home();
+
 
   /* USER CODE END 2 */
 
