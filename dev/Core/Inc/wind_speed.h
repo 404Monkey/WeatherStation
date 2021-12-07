@@ -1,15 +1,15 @@
-/*
- * wind_speed.h
- *
- *  Created on: Dec 3, 2021
- *      Author: theo
- */
+/**************************************************************
+   WindSpeed, from WeatherStation library, is available for STM32F746G platform to manage
+   our connected WeatherStation.
+
+   Licensed under University of Poitiers M1 Connected Object by TD1 GRP1.
+   Produced by Theo Biardeau.
+ **************************************************************/
 
 #ifndef INC_WIND_SPEED_H_
 #define INC_WIND_SPEED_H_
 
+// Give the wind speed
+double captureWindspeed (double *wind_tick, const int delay);
 
-
-int getwind_speed (double *wind_tick,const int sampling);
-
-#endif /* INC_WIND_SPEED_H_ */
+#endif

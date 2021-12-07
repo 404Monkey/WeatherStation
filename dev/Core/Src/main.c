@@ -48,7 +48,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-double wind_tick = 0;
+double WIND_TICK = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -63,7 +63,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
 	if (htim->Instance==TIM1)
 	{
-		wind_tick ++;
+		WIND_TICK ++;
 	}
 }
 /* USER CODE END 0 */
