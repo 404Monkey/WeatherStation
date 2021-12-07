@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
+#include "WeatherStation.h"
 
 //----------Constants----------//
 
@@ -40,23 +41,6 @@
 //Wind direction
 #define WD_TITLE "Wind direction"
 #define WD_Y_LABEL ""
-
-//----------Extern variables----------//
-
-/**
- *  Define the weather data
- */
-
-/* Values for each mesurand */
-extern float* TEMP_VALUES;
-extern float* HUM_VALUES;
-extern float* PRES_VALUES;
-extern float* WS_VALUES;
-extern float* RAIN_VALUES;
-extern uint8_t * WD_VALUE;
-
-/* Length for each array of values */
-extern int SIZE;
 
 //----------Functions----------//
 

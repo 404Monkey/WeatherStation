@@ -9,16 +9,6 @@ TS_StateTypeDef *TS_State;
  */
 uint8_t IS_HOME;
 
-//----------Extern variables----------//
-
-float* TEMP_VALUES;
-float* HUM_VALUES;
-float* PRES_VALUES;
-float* WS_VALUES;
-float* RAIN_VALUES;
-uint8_t * WD_VALUE;
-int SIZE;
-
 //----------Functions----------//
 
 void init_screen() {
@@ -62,25 +52,27 @@ void display_home(void) {
 	uint8_t value[10];
 
 	/* Display our 6 buttons */
-	measure = TEMP_VALUES[SIZE];
+	measure = Weather_station.temperature;
 	sprintf((char *)value, "%2.f", measure);
 	draw_main_button(20, 112,(uint8_t *)TEMP_TITLE, (uint8_t *) value);
 
-	measure = HUM_VALUES[SIZE];
+	measure = Weather_station.humidity;
 	sprintf((char *)value, "%2.f", measure);
 	draw_main_button(173, 112,(uint8_t *)HUM_TITLE, (uint8_t *) value);
 
-	measure = PRES_VALUES[SIZE];
+	measure = Weather_station.pressure;
 	sprintf((char *)value, "%2.f", measure);
 	draw_main_button(326, 112,(uint8_t *)PRES_TITLE, (uint8_t *) value);
 
-	measure = WS_VALUES[SIZE];
+	measure = Weather_station.wind_speed;
 	sprintf((char *)value, "%2.f", measure);
 	draw_main_button(20, 192,(uint8_t *)WS_TITLE, (uint8_t *) value);
 
-	draw_main_button(173, 192,(uint8_t *) WD_TITLE, WD_VALUE);
+	measure = Weather_station.wind_direction;
+	sprintf((char *)value, "%2.f", measure);
+	draw_main_button(173, 192,(uint8_t *) WD_TITLE, (uint8_t *) value);
 
-	measure = RAIN_VALUES[SIZE];
+	measure = Weather_station.rainfall;
 	sprintf((char *)value, "%2.f", measure);
 	draw_main_button(326, 192,(uint8_t *)RAIN_TITLE, (uint8_t *) value);
 
@@ -371,22 +363,22 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 		if (X>20 && X<153 && Y>112 && Y<182) {
 
 			//Temperature
-			display_graph(TEMP_VALUES, SIZE, TEMP_Y_LABEL, TEMP_TITLE);
+			display_graph(Graphics_data.temperatures, GRAPHICS_SIZE, TEMP_Y_LABEL, TEMP_TITLE);
 		}
 		else if (X>173 && X<306 && Y>112 && Y<182) {
 
 			//Humidity
-			display_graph(HUM_VALUES, SIZE, HUM_Y_LABEL, HUM_TITLE);
+			display_graph(Graphics_data.humidities, GRAPHICS_SIZE, HUM_Y_LABEL, HUM_TITLE);
 		}
 		else if (X>326 && X<459 && Y>112 && Y<182) {
 
 			//Pressure
-			display_graph(PRES_VALUES, SIZE, PRES_Y_LABEL, PRES_TITLE);
+			display_graph(Graphics_data.pressures, GRAPHICS_SIZE, PRES_Y_LABEL, PRES_TITLE);
 		}
 		else if (X>20 && X<153 && Y>192 && Y<262) {
 
 			//Wind speed
-			display_graph(WS_VALUES, SIZE, WS_Y_LABEL, WS_TITLE);
+			display_graph(Graphics_data.wind_speeds, GRAPHICS_SIZE, WS_Y_LABEL, WS_TITLE);
 		}
 		else if (X>173 && X<306 && Y>192 && Y<262) {
 
@@ -396,7 +388,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 		else if (X>326 && X<459 && Y>192 && Y<262) {
 
 			//Pulvimeter
-			display_graph(RAIN_VALUES, SIZE, RAIN_Y_LABEL, RAIN_TITLE);
+			display_graph(Graphics_data.rainfalls, GRAPHICS_SIZE, RAIN_Y_LABEL, RAIN_TITLE);
 		}
 	}
 	else//Return to home
