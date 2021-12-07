@@ -79,20 +79,27 @@ void display_home(void) {
 	display_timestamp();
 }
 
-void display_graph(float measures[], int size, char* YLabel, char* title) {
+void display_screen(float values[], uint8_t nbMeasures, char* Ylabel, char* title) {
 
 	IS_HOME = 0;
 
-	if (size < 3) {
+	if (nbMeasures < 3) {
 		display_error_measures(1);
 		return;
 	}
 
-	if (size > 50) {
+	if (nbMeasures > 50) {
 
 		display_error_measures(0);
 		return;
 	}
+
+	display_header(title, nbMeasures);
+
+	display_graph(values, nbMeasures, Ylabel);
+}
+
+void display_header(char* title, uint8_t nbMeasures) {
 
 	//Set LCD Foreground Layer
 	BSP_LCD_SelectLayer(LTDC_ACTIVE_LAYER);
@@ -112,12 +119,16 @@ void display_graph(float measures[], int size, char* YLabel, char* title) {
 	BSP_LCD_SetFont(&Font12);
 	//Label for the steps on the Y axis
 	uint8_t infos[50];
-	sprintf((char *)infos, "the last %d statements", size);
+	sprintf((char *)infos, "the last %d statements", nbMeasures);
 	BSP_LCD_DisplayStringAt(20, 45, infos, LEFT_MODE);
 
 	/* Screen divided */
 	BSP_LCD_DrawLine(480 - BSP_LCD_GetYSize()/RATIO, 0, 480 - BSP_LCD_GetYSize()/RATIO, BSP_LCD_GetYSize()/RATIO);//Vertical
 	BSP_LCD_DrawLine(0, BSP_LCD_GetYSize()/RATIO, 480, BSP_LCD_GetYSize()/RATIO);//Horyzontal
+
+}
+
+void display_graph(float measures[], uint8_t nbMeasures, char* YLabel) {
 
 	/* Drawing Axis of the graph */
 	//Y Axis
@@ -138,14 +149,14 @@ void display_graph(float measures[], int size, char* YLabel, char* title) {
 	BSP_LCD_DisplayStringAt(OFFSET * 3, (BSP_LCD_GetYSize()/RATIO) + (OFFSET/2),(uint8_t*) YLabel, LEFT_MODE);
 
 	/* Initialization of the N = size points that will be displayed to draw the curve */
-	Point measurePoints[size];
-	for (int i = 0; i < size; i++) {
+	Point measurePoints[nbMeasures];
+	for (int i = 0; i < nbMeasures; i++) {
 		measurePoints[i].X = 0;
 		measurePoints[i].Y = 0;
 	}
 
 	//Number of steps on X Axis
-	int nbStepX = size + 1;
+	int nbStepX = nbMeasures + 1;
 	//X Axis length
 	int axisXLng = (BSP_LCD_GetXSize() - OFFSET) - OFFSET*2;
 	//Step of the X axis
@@ -166,8 +177,8 @@ void display_graph(float measures[], int size, char* YLabel, char* title) {
 	uint8_t stepsLabel[5];
 
 	/* Min and max values from the array of measures */
-	float min = min_value(measures, size);
-	float max = max_value(measures, size);
+	float min = min_value(measures, nbMeasures);
+	float max = max_value(measures, nbMeasures);
 
 	/* Y Coordinates corresponding at min and max measures */
 	uint16_t YMax = 0;
@@ -176,10 +187,10 @@ void display_graph(float measures[], int size, char* YLabel, char* title) {
 	//Number of steps on the Y Axis
 	int nbStepY;
 
-	if (size > 6) {
+	if (nbMeasures > 6) {
 		nbStepY = 6;
 	} else {
-		nbStepY = size;
+		nbStepY = nbMeasures;
 	}
 
 	//Y Axis length
@@ -225,7 +236,7 @@ void display_graph(float measures[], int size, char* YLabel, char* title) {
 	uint16_t YAmp = YMin - YMax;
 
 	/* Process to determinate Y coordinates of each points of measure */
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < nbMeasures; i++) {
 
 		float currentValue = measures[i];
 
@@ -235,7 +246,7 @@ void display_graph(float measures[], int size, char* YLabel, char* title) {
 		BSP_LCD_FillCircle(measurePoints[i].X, measurePoints[i].Y, 2);
 	}
 
-	for (int i = 0; i < size-1; i++) {
+	for (int i = 0; i < nbMeasures-1; i++) {
 
 		BSP_LCD_DrawLine(measurePoints[i].X, measurePoints[i].Y, measurePoints[i+1].X, measurePoints[i+1].Y);
 	}
@@ -244,7 +255,13 @@ void display_graph(float measures[], int size, char* YLabel, char* title) {
 	draw_return_button(480 - (BSP_LCD_GetYSize()/RATIO)/2, (BSP_LCD_GetYSize()/RATIO)/2, 40);
 }
 
+void display_histo(float values[], uint8_t nbMeasures, char* YLabel) {
 
+	//...
+
+	//Drawing for the return button
+	draw_return_button(480 - (BSP_LCD_GetYSize()/RATIO)/2, (BSP_LCD_GetYSize()/RATIO)/2, 40);
+}
 
 void draw_main_button(uint16_t x, uint16_t y, uint8_t * text, uint8_t* value) {
 
@@ -262,7 +279,7 @@ void draw_main_button(uint16_t x, uint16_t y, uint8_t * text, uint8_t* value) {
 	/* Display the mesurand's value */
 	BSP_LCD_SetFont(&Font24);
 	BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
-BSP_LCD_SetTextColor(LCD_COLOR_DARKBLUE);
+	BSP_LCD_SetTextColor(LCD_COLOR_DARKBLUE);
 	BSP_LCD_DisplayStringAt(x+5,y+35, value,LEFT_MODE);
 }
 
@@ -319,7 +336,7 @@ void display_error_measures(uint8_t bool) {
 	draw_return_button(480 - (BSP_LCD_GetYSize()/RATIO)/2, (BSP_LCD_GetYSize()/RATIO)/2, 40);
 }
 
-float min_value(float values[], int size) {
+float min_value(float values[], uint8_t size) {
 
 	float min = values[0];
 
@@ -334,7 +351,7 @@ float min_value(float values[], int size) {
 	return min;
 }
 
-float max_value(float values[], int size) {
+float max_value(float values[], uint8_t size) {
 
 	float max = values[0];
 
@@ -363,22 +380,22 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 		if (X>20 && X<153 && Y>112 && Y<182) {
 
 			//Temperature
-			display_graph(Graphics_data.temperatures, GRAPHICS_SIZE, TEMP_Y_LABEL, TEMP_TITLE);
+			display_screen(Graphics_data.temperatures, GRAPHICS_SIZE, TEMP_Y_LABEL, TEMP_TITLE);
 		}
 		else if (X>173 && X<306 && Y>112 && Y<182) {
 
 			//Humidity
-			display_graph(Graphics_data.humidities, GRAPHICS_SIZE, HUM_Y_LABEL, HUM_TITLE);
+			display_screen(Graphics_data.humidities, GRAPHICS_SIZE, HUM_Y_LABEL, HUM_TITLE);
 		}
 		else if (X>326 && X<459 && Y>112 && Y<182) {
 
 			//Pressure
-			display_graph(Graphics_data.pressures, GRAPHICS_SIZE, PRES_Y_LABEL, PRES_TITLE);
+			display_screen(Graphics_data.pressures, GRAPHICS_SIZE, PRES_Y_LABEL, PRES_TITLE);
 		}
 		else if (X>20 && X<153 && Y>192 && Y<262) {
 
 			//Wind speed
-			display_graph(Graphics_data.wind_speeds, GRAPHICS_SIZE, WS_Y_LABEL, WS_TITLE);
+			display_screen(Graphics_data.wind_speeds, GRAPHICS_SIZE, WS_Y_LABEL, WS_TITLE);
 		}
 		else if (X>173 && X<306 && Y>192 && Y<262) {
 
@@ -388,7 +405,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 		else if (X>326 && X<459 && Y>192 && Y<262) {
 
 			//Pulvimeter
-			display_graph(Graphics_data.rainfalls, GRAPHICS_SIZE, RAIN_Y_LABEL, RAIN_TITLE);
+			display_screen(Graphics_data.rainfalls, GRAPHICS_SIZE, RAIN_Y_LABEL, RAIN_TITLE);
 		}
 	}
 	else//Return to home
