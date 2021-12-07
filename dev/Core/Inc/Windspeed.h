@@ -1,8 +1,8 @@
 /**************************************************************
-   WindSpeed, from WeatherStation library, is available for STM32F746G platform to manage
+   Windspeed, from WeatherStation library, is available for STM32F746G platform to manage
    our connected WeatherStation.
 
-   Licensed under University of Poitiers M1 Connected Object by TD1 GRP1.
+   Licensed under University of Poitiers M1 Connected Objects by TD1 GRP1.
    Produced by Theo Biardeau.
  **************************************************************/
 
