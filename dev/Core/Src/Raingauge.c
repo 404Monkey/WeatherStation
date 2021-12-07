@@ -23,15 +23,15 @@ double captureRainfall(TIM_HandleTypeDef *htim2, int delay){
 	//Check if delay equals to zero
 	if (delay == 0) {
 		//If so, display an error message and return an error value
-
         displayRainfall(counter, RAINGAUGE_ERROR_VAL, 0);
-		return RAINGAUGE_ERROR_VAL;
+
+        return RAINGAUGE_ERROR_VAL;
 	} else {
 		//If not, compute rainfall then display and return it
-
 		double rainfall = counter * CAPACITY * 3600 / delay;
         displayRainfall(counter, rainfall, delay);
-		return rainfall;
+
+        return rainfall;
 	}
 }
 
@@ -39,7 +39,7 @@ double captureRainfall(TIM_HandleTypeDef *htim2, int delay){
 void displayRainfall(long counter, double rainfall, int delay) {
 	printf("====== MONITORING RAIN GAUGE ======\r\n");
 	if (delay == 0) {
-		printf("=> ERROR RAIN GAUGE : In function \"Raingauge_captureRainfall\", delay cannot be equal to 0. \r\n");
+		printf("=> ERROR RAIN GAUGE : In function \"captureRainfall\", delay cannot be equal to 0. \r\n");
 	}
 	printf("Counter : %ld \r\n", counter);
 	printf("Rainfall : %f mm/h\r\n", rainfall);
