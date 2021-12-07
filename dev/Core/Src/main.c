@@ -36,6 +36,7 @@
 #include "WeatherStation.h"
 #include "i2csensors.h"
 #include "Raingauge.h"
+#include "Windspeed.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -46,7 +47,6 @@ set to 'Yes') calls __io_putchar() */
 #else
 #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
 #endif /* __GNUC__ */
-#include "Windspeed.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -102,7 +102,6 @@ int main(void)
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
-  uint32_t test = HAL_RCC_GetSysClockFreq();
   /* USER CODE BEGIN Init */
 
   /* USER CODE END Init */
@@ -130,11 +129,12 @@ int main(void)
 
   WeatherStationInit();
 
-  RaingaugeStart(&htim2);
-  HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1);
+  RaingaugeStart(&htim2); // timer de la pluie
+  HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1); // timer de l'aggrégation
+  HAL_TIM_IC_Start_IT(&htim1,TIM_CHANNEL_1); // timer de la vitesse du vent
 
   printf("démarrage du programme !\n");
-  HAL_TIM_IC_Start_IT(&htim1,TIM_CHANNEL_1);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -233,16 +233,17 @@ void aggregate() {
 	double humidity = gethumidity();
 	HAL_Delay(1000); // La pression ne veut pas se lire s'il n'y a pas ce delai
 	double pressure = getpressure();
-	double rainfall = RaingaugeCaptureRainfall(&htim2, DELAY);
-	//double wspeed = getwspeed(); // TODO
+	double rainfall = captureRainfall(&htim2, DELAY);
+	double wspeed = captureWindspeed(&WIND_TICK, DELAY);
 	//double wdir = getwdir(); // TODO
 
-	updateWeatherStation(&Weather_station, &Graphics_data, &Data_to_save, temperature, humidity, pressure, rainfall, 0, 0);
+	updateWeatherStation(&Weather_station, &Graphics_data, &Data_to_save, temperature, humidity, pressure, rainfall, wspeed, 0);
 
 	printf("temp :%f \r\n", (double)Weather_station.temperature);
 	printf("hum : %f \r\n", (double)Weather_station.humidity);
 	printf("press : %f \r\n", (double)Weather_station.pressure);
 	printf("rain : %f \r\n", (double)Weather_station.rainfall);
+	printf("wspeed : %f \r\n", (double)Weather_station.wind_speed);
 }
 
 /* USER CODE END 4 */
