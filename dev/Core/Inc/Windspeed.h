@@ -9,7 +9,9 @@
 #ifndef INC_WINDSPEED_H_
 #define INC_WINDSPEED_H_
 
+
 // - Give the wind speed saved since the last call function
 double captureWindspeed (double *wind_tick, const int delay);
-
+// - Monitoring data via UART serial port
+void displayWindspeed(double counter, double windspeed, const int delay);
 #endif
