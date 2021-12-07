@@ -10,20 +10,20 @@
 
 // - Give the wind speed saved since the last call function
 double captureWindspeed(double *wind_tick, const int delay) {
+    //Check if delay equals to zero
     if (delay == 0) {
-        //Compute wind speed, reset wind_tick counter and return wind speed
-        displayWindspeed(*wind_tick, wind_speed, delay);
+        //If so, display an error message and return an error value
+        displayWindspeed(*wind_tick, WINDSPEED_ERROR_VAL, delay);
 
-        return wind_speed;
+        return WINDSPEED_ERROR_VAL;
     } else {
-        //Compute wind speed, reset wind_tick counter and return wind speed
+        //If not, compute windspeed and reset the windtick, then display and return it
         double wind_speed =  (*wind_tick * 2.4)/delay;
         *wind_tick = 0;
         displayWindspeed(*wind_tick, wind_speed, delay);
 
         return wind_speed;
     }
-
 }
 
 // - Monitoring data via UART serial port

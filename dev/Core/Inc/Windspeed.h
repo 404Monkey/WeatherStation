@@ -9,6 +9,12 @@
 #ifndef INC_WINDSPEED_H_
 #define INC_WINDSPEED_H_
 
+/* -------------------- LIBRARIES -------------------- */
+#include "gpio.h"
+#include <stdio.h>
+
+/* ------------------- DECLARATIONS ------------------ */
+#define WINDSPEED_ERROR_VAL -1.0		// Error value of the wind speed
 
 // - Give the wind speed saved since the last call function
 double captureWindspeed (double *wind_tick, const int delay);
