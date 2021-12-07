@@ -13,10 +13,10 @@ extern TIM_HandleTypeDef htim2;			// Instance of timer/counter
 #define RAINGAUGE_ERROR_VAL -1.0		// Error value of the rain gauge
 
 // - Start the timer dedicated to the rain gauge
-void Raingauge_start(TIM_HandleTypeDef *htim2);
+void RaingaugeStart(TIM_HandleTypeDef *htim2);
 // - Give the rainfall saved since the last call function
-double Raingauge_captureRainfall(TIM_HandleTypeDef *htim2, int _DELAY);
+double RaingaugeCaptureRainfall(TIM_HandleTypeDef *htim2, int delay);
 // - Monitoring data via UART serial port
-void Raingauge_displayRainfall(long _COUNTER, double _RAINFALL, int _DELAY);
+void RaingaugeDisplayRainfall(long counter, double rainfall, int delay);
 
 #endif
