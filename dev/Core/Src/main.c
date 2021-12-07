@@ -34,6 +34,7 @@
 /* USER CODE BEGIN Includes */
 
 #include "WeatherStation.h"
+#include "draw_frame_graph.h"
 #include "i2csensors.h"
 #include <stdio.h>
 #include <string.h>
@@ -118,9 +119,14 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
+  init_screen();
+
   WeatherStationInit();
 
   HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1);
+
+  display_home();
+
 
   /* USER CODE END 2 */
 

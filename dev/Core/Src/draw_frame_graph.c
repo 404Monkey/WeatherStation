@@ -16,15 +16,15 @@ float* HUM_VALUES;
 float* PRES_VALUES;
 float* WS_VALUES;
 float* RAIN_VALUES;
-int TEMP_SIZE;
-int HUM_SIZE;
-int PRES_SIZE;
-int WS_SIZE;
-int RAIN_SIZE;
+uint8_t * WD_VALUE;
+int SIZE;
 
 //----------Functions----------//
 
 void init_screen() {
+
+	//To allow display degree symbol "°"
+	setlocale(LC_ALL, "");
 
 	BSP_LCD_Init();
 
@@ -62,32 +62,32 @@ void display_home(void) {
 	uint8_t value[10];
 
 	/* Display our 6 buttons */
-	measure = TEMP_VALUES[TEMP_SIZE];
+	measure = TEMP_VALUES[SIZE];
 	sprintf((char *)value, "%2.f", measure);
-	draw_home_button(20, 112,(uint8_t *)TEMP_TITLE, (uint8_t *) value);
+	draw_main_button(20, 112,(uint8_t *)TEMP_TITLE, (uint8_t *) value);
 
-	measure = HUM_VALUES[HUM_SIZE];
+	measure = HUM_VALUES[SIZE];
 	sprintf((char *)value, "%2.f", measure);
-	draw_home_button(173, 112,(uint8_t *)HUM_TITLE, (uint8_t *) value);
+	draw_main_button(173, 112,(uint8_t *)HUM_TITLE, (uint8_t *) value);
 
-	measure = PRES_VALUES[PRES_SIZE];
+	measure = PRES_VALUES[SIZE];
 	sprintf((char *)value, "%2.f", measure);
-	draw_home_button(326, 112,(uint8_t *)PRES_TITLE, (uint8_t *) value);
+	draw_main_button(326, 112,(uint8_t *)PRES_TITLE, (uint8_t *) value);
 
-	measure = WS_VALUES[WS_SIZE];
+	measure = WS_VALUES[SIZE];
 	sprintf((char *)value, "%2.f", measure);
-	draw_home_button(20, 192,(uint8_t *)WS_TITLE, (uint8_t *) value);
+	draw_main_button(20, 192,(uint8_t *)WS_TITLE, (uint8_t *) value);
 
-	draw_home_button(173, 192,(uint8_t *)"Wind direction", (uint8_t *)"NW");
+	draw_main_button(173, 192,(uint8_t *) WD_TITLE, WD_VALUE);
 
-	measure = RAIN_VALUES[RAIN_SIZE];
+	measure = RAIN_VALUES[SIZE];
 	sprintf((char *)value, "%2.f", measure);
-	draw_home_button(326, 192,(uint8_t *)RAIN_TITLE, (uint8_t *) value);
+	draw_main_button(326, 192,(uint8_t *)RAIN_TITLE, (uint8_t *) value);
 
 	display_timestamp();
 }
 
-void display_screen(float measures[], int size, char* YLabel, char* title) {
+void display_graph(float measures[], int size, char* YLabel, char* title) {
 
 	IS_HOME = 0;
 
@@ -254,7 +254,7 @@ void display_screen(float measures[], int size, char* YLabel, char* title) {
 
 
 
-void draw_home_button(uint16_t x, uint16_t y, uint8_t * text, uint8_t* value) {
+void draw_main_button(uint16_t x, uint16_t y, uint8_t * text, uint8_t* value) {
 
 	/* Draw the button */
 	BSP_LCD_SetTextColor(LCD_COLOR_DARKBLUE);
@@ -371,22 +371,22 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 		if (X>20 && X<153 && Y>112 && Y<182) {
 
 			//Temperature
-			display_screen(TEMP_VALUES, TEMP_SIZE, TEMP_Y_LABEL, TEMP_TITLE);
+			display_graph(TEMP_VALUES, SIZE, TEMP_Y_LABEL, TEMP_TITLE);
 		}
 		else if (X>173 && X<306 && Y>112 && Y<182) {
 
 			//Humidity
-			display_screen(HUM_VALUES, HUM_SIZE, HUM_Y_LABEL, HUM_TITLE);
+			display_graph(HUM_VALUES, SIZE, HUM_Y_LABEL, HUM_TITLE);
 		}
 		else if (X>326 && X<459 && Y>112 && Y<182) {
 
 			//Pressure
-			display_screen(PRES_VALUES, PRES_SIZE, PRES_Y_LABEL, PRES_TITLE);
+			display_graph(PRES_VALUES, SIZE, PRES_Y_LABEL, PRES_TITLE);
 		}
 		else if (X>20 && X<153 && Y>192 && Y<262) {
 
 			//Wind speed
-			display_screen(WS_VALUES, WS_SIZE, WS_Y_LABEL, WS_TITLE);
+			display_graph(WS_VALUES, SIZE, WS_Y_LABEL, WS_TITLE);
 		}
 		else if (X>173 && X<306 && Y>192 && Y<262) {
 
@@ -396,7 +396,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 		else if (X>326 && X<459 && Y>192 && Y<262) {
 
 			//Pulvimeter
-			display_screen(RAIN_VALUES, RAIN_SIZE, RAIN_Y_LABEL, RAIN_TITLE);
+			display_graph(RAIN_VALUES, SIZE, RAIN_Y_LABEL, RAIN_TITLE);
 		}
 	}
 	else//Return to home

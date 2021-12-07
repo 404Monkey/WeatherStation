@@ -3,13 +3,12 @@
 #include "../../Drivers/BSP/STM32746G-Discovery/stm32746g_discovery_ts.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <locale.h>
 
 //----------Constants----------//
 
 /*
- * RATIO to divide the screen (1/4, 1/3, ...)
- * (1/RATIO) for Title and subtitle
- * (2/RATIO) for the curve
+ * Ratio to divide the screen (1/3)
  */
 #define RATIO 3
 
@@ -31,12 +30,16 @@
 #define PRES_Y_LABEL "(hpa)"
 
 //Rain
-#define RAIN_TITLE "Rain (?)"
+#define RAIN_TITLE "Rain (mm/h)"
 #define RAIN_Y_LABEL "(mm/h)"
 
 //Wind speed
 #define WS_TITLE "Wind speed (km/h)"
 #define WS_Y_LABEL "(km/h)"
+
+//Wind direction
+#define WD_TITLE "Wind direction"
+#define WD_Y_LABEL ""
 
 //----------Extern variables----------//
 
@@ -50,13 +53,10 @@ extern float* HUM_VALUES;
 extern float* PRES_VALUES;
 extern float* WS_VALUES;
 extern float* RAIN_VALUES;
+extern uint8_t * WD_VALUE;
 
 /* Length for each array of values */
-extern int TEMP_SIZE;
-extern int HUM_SIZE;
-extern int PRES_SIZE;
-extern int WS_SIZE;
-extern int RAIN_SIZE;
+extern int SIZE;
 
 //----------Functions----------//
 
@@ -79,7 +79,7 @@ void display_home(void);
  * param5, uint8_t title[50] : title of the screen
  * param6, uint8_t subTitle[50] : infos of the screen
  */
-void display_screen(float values[], int size, char* YLabel, char* title);
+void display_graph(float values[], int size, char* YLabel, char* title);
 
 /**
  * Draw a button corresponding to a measure in the dashboard
@@ -87,7 +87,7 @@ void display_screen(float values[], int size, char* YLabel, char* title);
  * param2, uint16_t y : y coordinate of the top left corner
  * param3, uint8_t* text : label for the button
  */
-void draw_home_button(uint16_t x, uint16_t y, uint8_t * text, uint8_t * value);
+void draw_main_button(uint16_t x, uint16_t y, uint8_t * text, uint8_t * value);
 
 /**
  * Draw the button to return to the dashboard
