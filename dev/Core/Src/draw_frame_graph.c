@@ -255,9 +255,11 @@ void display_graph(float measures[], uint8_t nbMeasures, char* YLabel) {
 	draw_return_button(480 - (BSP_LCD_GetYSize()/RATIO)/2, (BSP_LCD_GetYSize()/RATIO)/2, 40);
 }
 
-void display_histo(float values[], uint8_t nbMeasures, char* YLabel) {
+void display_histo(uint16_t values[], uint8_t nbMeasures, char* YLabel, char* title) {
 
-	//...
+	display_header(title, nbMeasures);
+
+	//Draw histo
 
 	//Drawing for the return button
 	draw_return_button(480 - (BSP_LCD_GetYSize()/RATIO)/2, (BSP_LCD_GetYSize()/RATIO)/2, 40);

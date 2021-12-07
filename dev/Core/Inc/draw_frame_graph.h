@@ -84,11 +84,13 @@ void display_graph(float values[], uint8_t nbMeasures, char* YLabel);
 
 /**
  * Display the histogram corresponding to the wind direction
+ * and the header of the screen
  * param1, uint16_t values[] : array of measures for wind direction
  * param2, uint8_t nbMeasures : number of measures
  * param3, char* Ylabel : Label for the Y Axis
+ * param3, char* title : title of the screen
  */
-void display_histo(uint16_t values[], uint8_t nbMeasures, char* YLabel);
+void display_histo(uint16_t values[], uint8_t nbMeasures, char* YLabel, char* title);
 
 /**
  * Draw a button corresponding to a measure in the dashboard
@@ -134,6 +136,11 @@ float min_value(float values[], uint8_t size);
  * param2, uint8_t size : array length
  */
 float max_value(float values[], uint8_t size);
+
+/**
+ * Convert the angle in degrees of the wind direction in the corresponding label
+ */
+uint8_t* windDirectionLabel(uint8_t angle);
 
 /**
  * Handler for the interrupt from the touch screen
