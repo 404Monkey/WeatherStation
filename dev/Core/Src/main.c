@@ -39,6 +39,7 @@
 #include "i2csensors.h"
 #include "Raingauge.h"
 #include "Windspeed.h"
+#include "windDirection.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -130,14 +131,15 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
 
-  init_screen();
-
   WeatherStationInit();
+
+  init_screen();
 
   RaingaugeStart(&htim2); // timer de la pluie
   HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1); // timer de l'aggrégation
   HAL_TIM_IC_Start_IT(&htim1,TIM_CHANNEL_1); // timer de la vitesse du vent
   HAL_RTC_Init(&hrtc);
+  HAL_ADC_Start(&hadc3); //Starts conversion Analog to Digital.
 
   printf("démarrage du programme !\r\n");
 
@@ -263,15 +265,16 @@ void aggregate() {
 	double pressure = getpressure();
 	double rainfall = captureRainfall(&htim2, DELAY);
 	double wspeed = captureWindspeed(&WIND_TICK, DELAY);
-	//double wdir = getwdir(); // TODO
+	double wdir = getDirection(HAL_ADC_GetValue(&hadc3));
 
-	updateWeatherStation(&Weather_station, &Graphics_data, &Data_to_save, temperature, humidity, pressure, rainfall, wspeed, 0);
+	updateWeatherStation(&Weather_station, &Graphics_data, &Data_to_save, temperature, humidity, pressure, rainfall, wspeed, wdir);
 
 	printf("temp :%f \r\n", (double)Weather_station.temperature);
 	printf("hum : %f \r\n", (double)Weather_station.humidity);
 	printf("press : %f \r\n", (double)Weather_station.pressure);
 	printf("rain : %f \r\n", (double)Weather_station.rainfall);
 	printf("wspeed : %f \r\n", (double)Weather_station.wind_speed);
+	printf("wdir : %f \r\n", (double)Weather_station.wind_direction);
 }
 
 /* USER CODE END 4 */
