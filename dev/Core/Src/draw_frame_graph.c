@@ -65,8 +65,8 @@ void display_home(void) {
 	draw_main_button(20, 192,(uint8_t *)WS_TITLE, (uint8_t *) value);
 
 	measure = Weather_station.wind_direction;
-	sprintf((char *)value, "%2.f", measure);
-	draw_main_button(173, 192,(uint8_t *) WD_TITLE, (uint8_t *) value);
+	//sprintf((char *)value, "%2.f", measure);
+	draw_main_button(173, 192,(uint8_t *) WD_TITLE, windDirectionLabel(measure));
 
 	measure = Weather_station.rainfall;
 	sprintf((char *)value, "%2.f", measure);
@@ -403,6 +403,39 @@ float max_value(float values[], uint8_t size) {
 	}
 
 	return max;
+}
+
+uint8_t* windDirectionLabel(float angle) {
+
+	switch ((int)angle) {
+		case 0:
+			return "N";
+			break;
+		case 45:
+			return "NE";
+			break;
+		case 90:
+			return "E";
+			break;
+		case 135:
+			return "SE";
+			break;
+		case 180:
+			return "S";
+			break;
+		case 225:
+			return "SW";
+			break;
+		case 270:
+			return "W";
+			break;
+		case 315:
+			return "NW";
+			break;
+		default:
+			return "?";
+			break;
+	}
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {

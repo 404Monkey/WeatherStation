@@ -163,7 +163,7 @@ float max_value(float values[], uint8_t size);
 /**
  * Convert the angle in degrees of the wind direction in the corresponding label
  */
-uint8_t* windDirectionLabel(uint8_t angle);
+uint8_t* windDirectionLabel(float angle);
 
 /**
  * Handler for the interrupt from the touch screen
