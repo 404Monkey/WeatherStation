@@ -4,17 +4,13 @@
 
 TS_StateTypeDef *TS_State;
 
-/**
- * Flag to know if it's dashboard
- */
 uint8_t IS_HOME;
+
+uint8_t SCREEN_INDEX;
 
 //----------Functions----------//
 
 void init_screen() {
-
-	//To allow display degree symbol "°"
-	setlocale(LC_ALL, "");
 
 	BSP_LCD_Init();
 
@@ -69,8 +65,8 @@ void display_home(void) {
 	draw_main_button(20, 192,(uint8_t *)WS_TITLE, (uint8_t *) value);
 
 	measure = Weather_station.wind_direction;
-	sprintf((char *)value, "%2.f", measure);
-	draw_main_button(173, 192,(uint8_t *) WD_TITLE, (uint8_t *) value);
+	//sprintf((char *)value, "%2.f", measure);
+	draw_main_button(173, 192,(uint8_t *) WD_TITLE, windDirectionLabel(measure));
 
 	measure = Weather_station.rainfall;
 	sprintf((char *)value, "%2.f", measure);
@@ -79,20 +75,30 @@ void display_home(void) {
 	display_timestamp();
 }
 
-void display_graph(float measures[], int size, char* YLabel, char* title) {
+void display_screen(float values[], uint8_t nbMeasures, char* Ylabel, char* title) {
 
 	IS_HOME = 0;
 
-	if (size < 3) {
+	if (nbMeasures < 3) {
 		display_error_measures(1);
 		return;
 	}
 
-	if (size > 50) {
+	if (nbMeasures > 24) {
 
 		display_error_measures(0);
 		return;
 	}
+
+	display_header(title, nbMeasures);
+
+	display_graph(values, nbMeasures, Ylabel);
+
+	//Drawing for the return button
+	draw_return_button(480 - (BSP_LCD_GetYSize()/RATIO)/2, (BSP_LCD_GetYSize()/RATIO)/2, 40);
+}
+
+void display_header(char* title, uint8_t nbMeasures) {
 
 	//Set LCD Foreground Layer
 	BSP_LCD_SelectLayer(LTDC_ACTIVE_LAYER);
@@ -112,12 +118,16 @@ void display_graph(float measures[], int size, char* YLabel, char* title) {
 	BSP_LCD_SetFont(&Font12);
 	//Label for the steps on the Y axis
 	uint8_t infos[50];
-	sprintf((char *)infos, "the last %d statements", size);
+	sprintf((char *)infos, "the last %d statements", nbMeasures);
 	BSP_LCD_DisplayStringAt(20, 45, infos, LEFT_MODE);
 
 	/* Screen divided */
 	BSP_LCD_DrawLine(480 - BSP_LCD_GetYSize()/RATIO, 0, 480 - BSP_LCD_GetYSize()/RATIO, BSP_LCD_GetYSize()/RATIO);//Vertical
 	BSP_LCD_DrawLine(0, BSP_LCD_GetYSize()/RATIO, 480, BSP_LCD_GetYSize()/RATIO);//Horyzontal
+
+}
+
+void display_graph(float measures[], uint8_t nbMeasures, char* YLabel) {
 
 	/* Drawing Axis of the graph */
 	//Y Axis
@@ -138,36 +148,36 @@ void display_graph(float measures[], int size, char* YLabel, char* title) {
 	BSP_LCD_DisplayStringAt(OFFSET * 3, (BSP_LCD_GetYSize()/RATIO) + (OFFSET/2),(uint8_t*) YLabel, LEFT_MODE);
 
 	/* Initialization of the N = size points that will be displayed to draw the curve */
-	Point measurePoints[size];
-	for (int i = 0; i < size; i++) {
+	Point measurePoints[nbMeasures];
+	for (int i = 0; i < nbMeasures; i++) {
 		measurePoints[i].X = 0;
 		measurePoints[i].Y = 0;
 	}
 
 	//Number of steps on X Axis
-	int nbStepX = size + 1;
+	int nbStepX = nbMeasures + 1;
 	//X Axis length
 	int axisXLng = (BSP_LCD_GetXSize() - OFFSET) - OFFSET*2;
 	//Step of the X axis
 	int stepX = axisXLng/nbStepX;
 
 	/* Drawing steps on the X Axis */
-	for (int i = 0; i < nbStepX-1; i++) {
+	for (int i = 0; i < nbMeasures; i++) {
 
 		//From 0 to size-1, so N = "size" measures
 
-		BSP_LCD_DrawLine(OFFSET + (i+1)*stepX, BSP_LCD_GetYSize() - OFFSET + 2, OFFSET + (i+1)*stepX, BSP_LCD_GetYSize() - OFFSET - 2);//X Axis
+		BSP_LCD_DrawLine(OFFSET*2 + (i+1)*stepX, BSP_LCD_GetYSize() - OFFSET + 2, OFFSET*2 + (i+1)*stepX, BSP_LCD_GetYSize() - OFFSET - 2);//X Axis
 
 		//The X coordinate of the current point is the same as the current step
-		measurePoints[i].X = OFFSET + (i+1)*stepX;
+		measurePoints[i].X = OFFSET*2 + (i+1)*stepX;
 	}
 
 	//Label for the steps on the Y axis
 	uint8_t stepsLabel[5];
 
 	/* Min and max values from the array of measures */
-	float min = min_value(measures, size);
-	float max = max_value(measures, size);
+	float min = min_value(measures, nbMeasures);
+	float max = max_value(measures, nbMeasures);
 
 	/* Y Coordinates corresponding at min and max measures */
 	uint16_t YMax = 0;
@@ -176,10 +186,10 @@ void display_graph(float measures[], int size, char* YLabel, char* title) {
 	//Number of steps on the Y Axis
 	int nbStepY;
 
-	if (size > 6) {
+	if (nbMeasures > 6) {
 		nbStepY = 6;
 	} else {
-		nbStepY = size;
+		nbStepY = nbMeasures;
 	}
 
 	//Y Axis length
@@ -193,6 +203,12 @@ void display_graph(float measures[], int size, char* YLabel, char* title) {
 
 	/* Amplitude of the measurements and steps between each of them */
 	float amp = max - min;
+
+	//To counter an array of the same values
+	if (amp == 0) {
+		amp = 1;
+	}
+
 	float stepOfMeasure = amp/(nbStepY-1);
 
 	/* Drawing steps on Y Axis */
@@ -225,7 +241,7 @@ void display_graph(float measures[], int size, char* YLabel, char* title) {
 	uint16_t YAmp = YMin - YMax;
 
 	/* Process to determinate Y coordinates of each points of measure */
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < nbMeasures; i++) {
 
 		float currentValue = measures[i];
 
@@ -235,16 +251,21 @@ void display_graph(float measures[], int size, char* YLabel, char* title) {
 		BSP_LCD_FillCircle(measurePoints[i].X, measurePoints[i].Y, 2);
 	}
 
-	for (int i = 0; i < size-1; i++) {
+	for (int i = 0; i < nbMeasures-1; i++) {
 
 		BSP_LCD_DrawLine(measurePoints[i].X, measurePoints[i].Y, measurePoints[i+1].X, measurePoints[i+1].Y);
 	}
+}
+
+void display_histo(uint16_t values[], uint8_t nbMeasures, char* YLabel, char* title) {
+
+	display_header(title, nbMeasures);
+
+	//Draw histo
 
 	//Drawing for the return button
 	draw_return_button(480 - (BSP_LCD_GetYSize()/RATIO)/2, (BSP_LCD_GetYSize()/RATIO)/2, 40);
 }
-
-
 
 void draw_main_button(uint16_t x, uint16_t y, uint8_t * text, uint8_t* value) {
 
@@ -262,7 +283,7 @@ void draw_main_button(uint16_t x, uint16_t y, uint8_t * text, uint8_t* value) {
 	/* Display the mesurand's value */
 	BSP_LCD_SetFont(&Font24);
 	BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
-BSP_LCD_SetTextColor(LCD_COLOR_DARKBLUE);
+	BSP_LCD_SetTextColor(LCD_COLOR_DARKBLUE);
 	BSP_LCD_DisplayStringAt(x+5,y+35, value,LEFT_MODE);
 }
 
@@ -312,14 +333,47 @@ void display_error_measures(uint8_t bool) {
 		BSP_LCD_DisplayStringAt(0, 166,(uint8_t*) "There must be at least 3 measurements for the measurand !", CENTER_MODE);
 	} else {
 
-		BSP_LCD_DisplayStringAt(0, 166,(uint8_t*) "There should be a maximum of 50 measurements for the measurand !", CENTER_MODE);
+		BSP_LCD_DisplayStringAt(0, 166,(uint8_t*) "There should be a maximum of 24 measurements for the measurand !", CENTER_MODE);
 	}
 
 	//Drawing for the return button
 	draw_return_button(480 - (BSP_LCD_GetYSize()/RATIO)/2, (BSP_LCD_GetYSize()/RATIO)/2, 40);
 }
 
-float min_value(float values[], int size) {
+void update_screen(void) {
+
+	if (IS_HOME == 1) {
+
+		display_home();
+	} else {
+
+		switch (SCREEN_INDEX) {
+			case 1:
+				display_screen(Graphics_data.temperatures, GRAPHICS_SIZE, TEMP_Y_LABEL, TEMP_TITLE);
+				break;
+			case 2:
+				display_screen(Graphics_data.humidities, GRAPHICS_SIZE, HUM_Y_LABEL, HUM_TITLE);
+				break;
+			case 3:
+				display_screen(Graphics_data.pressures, GRAPHICS_SIZE, PRES_Y_LABEL, PRES_TITLE);
+				break;
+			case 4:
+				display_screen(Graphics_data.wind_speeds, GRAPHICS_SIZE, WS_Y_LABEL, WS_TITLE);
+				break;
+			case 5:
+				display_home();
+				break;
+			case 6:
+				display_screen(Graphics_data.rainfalls, GRAPHICS_SIZE, RAIN_Y_LABEL, RAIN_TITLE);
+				break;
+			default:
+				display_home();
+				break;
+		}
+	}
+}
+
+float min_value(float values[], uint8_t size) {
 
 	float min = values[0];
 
@@ -334,11 +388,13 @@ float min_value(float values[], int size) {
 	return min;
 }
 
-float max_value(float values[], int size) {
+float max_value(float values[], uint8_t size) {
 
 	float max = values[0];
 
 	for (int i = 1; i < size; i++) {
+
+		printf("%d",(int)values[i]);
 
 		if (values[i] > max) {
 
@@ -347,6 +403,39 @@ float max_value(float values[], int size) {
 	}
 
 	return max;
+}
+
+uint8_t* windDirectionLabel(float angle) {
+
+	switch ((int)angle) {
+		case 0:
+			return "N";
+			break;
+		case 45:
+			return "NE";
+			break;
+		case 90:
+			return "E";
+			break;
+		case 135:
+			return "SE";
+			break;
+		case 180:
+			return "S";
+			break;
+		case 225:
+			return "SW";
+			break;
+		case 270:
+			return "W";
+			break;
+		case 315:
+			return "NW";
+			break;
+		default:
+			return "?";
+			break;
+	}
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
@@ -362,39 +451,53 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 	if(IS_HOME == 1) {
 		if (X>20 && X<153 && Y>112 && Y<182) {
 
+			SCREEN_INDEX = 1;
+
 			//Temperature
-			display_graph(Graphics_data.temperatures, GRAPHICS_SIZE, TEMP_Y_LABEL, TEMP_TITLE);
+			display_screen(Graphics_data.temperatures, GRAPHICS_SIZE, TEMP_Y_LABEL, TEMP_TITLE);
 		}
 		else if (X>173 && X<306 && Y>112 && Y<182) {
 
+			SCREEN_INDEX = 2;
+
 			//Humidity
-			display_graph(Graphics_data.humidities, GRAPHICS_SIZE, HUM_Y_LABEL, HUM_TITLE);
+			display_screen(Graphics_data.humidities, GRAPHICS_SIZE, HUM_Y_LABEL, HUM_TITLE);
 		}
 		else if (X>326 && X<459 && Y>112 && Y<182) {
 
+			SCREEN_INDEX = 3;
+
 			//Pressure
-			display_graph(Graphics_data.pressures, GRAPHICS_SIZE, PRES_Y_LABEL, PRES_TITLE);
+			display_screen(Graphics_data.pressures, GRAPHICS_SIZE, PRES_Y_LABEL, PRES_TITLE);
 		}
 		else if (X>20 && X<153 && Y>192 && Y<262) {
 
+			SCREEN_INDEX = 4;
+
 			//Wind speed
-			display_graph(Graphics_data.wind_speeds, GRAPHICS_SIZE, WS_Y_LABEL, WS_TITLE);
+			display_screen(Graphics_data.wind_speeds, GRAPHICS_SIZE, WS_Y_LABEL, WS_TITLE);
 		}
 		else if (X>173 && X<306 && Y>192 && Y<262) {
+
+			SCREEN_INDEX = 5;
 
 			//Wind direction
 			//do stuff
 		}
 		else if (X>326 && X<459 && Y>192 && Y<262) {
 
+			SCREEN_INDEX = 6;
+
 			//Pulvimeter
-			display_graph(Graphics_data.rainfalls, GRAPHICS_SIZE, RAIN_Y_LABEL, RAIN_TITLE);
+			display_screen(Graphics_data.rainfalls, GRAPHICS_SIZE, RAIN_Y_LABEL, RAIN_TITLE);
 		}
 	}
 	else//Return to home
 	{
 		if (X>390 && Y<90)
 		{
+			SCREEN_INDEX = 0;
+
 			display_home();
 		}
 	}

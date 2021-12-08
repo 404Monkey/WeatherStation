@@ -276,6 +276,8 @@ void aggregate() {
 	printf("rain : %f \r\n", (double)Weather_station.rainfall);
 	printf("wspeed : %f \r\n", (double)Weather_station.wind_speed);
 	printf("wdir : %f \r\n", (double)Weather_station.wind_direction);
+
+	update_screen();
 }
 
 /* USER CODE END 4 */
