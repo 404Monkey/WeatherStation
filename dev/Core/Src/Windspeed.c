@@ -18,7 +18,7 @@ double captureWindspeed(double *wind_tick, const int delay) {
         return WINDSPEED_ERROR_VAL;
     } else {
         //If not, compute windspeed and reset the windtick, then display and return it
-        double wind_speed = (*wind_tick * 2.4)/delay;
+        double wind_speed = (*wind_tick * 2 * 3.14 * 0.07 * 3.6) / delay;
         displayWindspeed(*wind_tick, wind_speed, delay);
         *wind_tick = 0;
 

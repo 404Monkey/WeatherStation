@@ -49,27 +49,27 @@ void display_home(void) {
 
 	/* Display our 6 buttons */
 	measure = Weather_station.temperature;
-	sprintf((char *)value, "%2.f", measure);
+	sprintf((char *)value, "%.2f", measure);
 	draw_main_button(20, 112,(uint8_t *)TEMP_TITLE, (uint8_t *) value);
 
 	measure = Weather_station.humidity;
-	sprintf((char *)value, "%2.f", measure);
+	sprintf((char *)value, "%.2f", measure);
 	draw_main_button(173, 112,(uint8_t *)HUM_TITLE, (uint8_t *) value);
 
 	measure = Weather_station.pressure;
-	sprintf((char *)value, "%2.f", measure);
+	sprintf((char *)value, "%.2f", measure);
 	draw_main_button(326, 112,(uint8_t *)PRES_TITLE, (uint8_t *) value);
 
 	measure = Weather_station.wind_speed;
-	sprintf((char *)value, "%2.f", measure);
+	sprintf((char *)value, "%.2f", measure);
 	draw_main_button(20, 192,(uint8_t *)WS_TITLE, (uint8_t *) value);
 
 	measure = Weather_station.wind_direction;
-	//sprintf((char *)value, "%2.f", measure);
+	//sprintf((char *)value, "%.2f", measure);
 	draw_main_button(173, 192,(uint8_t *) WD_TITLE, windDirectionLabel(measure));
 
 	measure = Weather_station.rainfall;
-	sprintf((char *)value, "%2.f", measure);
+	sprintf((char *)value, "%.2f", measure);
 	draw_main_button(326, 192,(uint8_t *)RAIN_TITLE, (uint8_t *) value);
 
 	display_timestamp();

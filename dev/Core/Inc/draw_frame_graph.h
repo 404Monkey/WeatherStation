@@ -53,8 +53,8 @@ extern uint8_t SCREEN_INDEX;
 #define PRES_Y_LABEL "(hpa)"
 
 //Rain
-#define RAIN_TITLE "Rain (mm/h)"
-#define RAIN_Y_LABEL "(mm/h)"
+#define RAIN_TITLE "Rain (mm)"
+#define RAIN_Y_LABEL "(mm)"
 
 //Wind speed
 #define WS_TITLE "Wind speed (km/h)"
