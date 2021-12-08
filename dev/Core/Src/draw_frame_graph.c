@@ -44,7 +44,7 @@ void display_home(void) {
 	BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
 	BSP_LCD_DisplayStringAt(0, 60, (uint8_t *)"Dashboard", CENTER_MODE);
 
-	float measure;
+	double measure;
 	uint8_t value[10];
 
 	/* Display our 6 buttons */
@@ -75,7 +75,7 @@ void display_home(void) {
 	display_timestamp();
 }
 
-void display_screen(float values[], uint8_t nbMeasures, char* Ylabel, char* title) {
+void display_screen(double values[], uint8_t nbMeasures, char* Ylabel, char* title) {
 
 	IS_HOME = 0;
 
@@ -127,7 +127,7 @@ void display_header(char* title, uint8_t nbMeasures) {
 
 }
 
-void display_graph(float measures[], uint8_t nbMeasures, char* YLabel) {
+void display_graph(double measures[], uint8_t nbMeasures, char* YLabel) {
 
 	/* Drawing Axis of the graph */
 	//Y Axis
@@ -176,8 +176,8 @@ void display_graph(float measures[], uint8_t nbMeasures, char* YLabel) {
 	uint8_t stepsLabel[5];
 
 	/* Min and max values from the array of measures */
-	float min = min_value(measures, nbMeasures);
-	float max = max_value(measures, nbMeasures);
+	double min = min_value(measures, nbMeasures);
+	double max = max_value(measures, nbMeasures);
 
 	/* Y Coordinates corresponding at min and max measures */
 	uint16_t YMax = 0;
@@ -202,14 +202,14 @@ void display_graph(float measures[], uint8_t nbMeasures, char* YLabel) {
 	BSP_LCD_SetFont(&Font8);
 
 	/* Amplitude of the measurements and steps between each of them */
-	float amp = max - min;
+	double amp = max - min;
 
 	//To counter an array of the same values
 	if (amp == 0) {
 		amp = 1;
 	}
 
-	float stepOfMeasure = amp/(nbStepY-1);
+	double stepOfMeasure = amp/(nbStepY-1);
 
 	/* Drawing steps on Y Axis */
 	for (int i = 0; i < nbStepY; i++) {
@@ -243,7 +243,7 @@ void display_graph(float measures[], uint8_t nbMeasures, char* YLabel) {
 	/* Process to determinate Y coordinates of each points of measure */
 	for (int i = 0; i < nbMeasures; i++) {
 
-		float currentValue = measures[i];
+		double currentValue = measures[i];
 
 		//Cross product, where the minimum measurement represents 100% of the Y axis amplitude
 		measurePoints[i].Y = (BSP_LCD_GetYSize() - OFFSET) - ((currentValue-min)/amp)*YAmp;
@@ -373,9 +373,9 @@ void update_screen(void) {
 	}
 }
 
-float min_value(float values[], uint8_t size) {
+double min_value(double values[], uint8_t size) {
 
-	float min = values[0];
+	double min = values[0];
 
 	for (int i = 1; i < size; i++) {
 
@@ -388,9 +388,9 @@ float min_value(float values[], uint8_t size) {
 	return min;
 }
 
-float max_value(float values[], uint8_t size) {
+double max_value(double values[], uint8_t size) {
 
-	float max = values[0];
+	double max = values[0];
 
 	for (int i = 1; i < size; i++) {
 
@@ -405,7 +405,7 @@ float max_value(float values[], uint8_t size) {
 	return max;
 }
 
-uint8_t* windDirectionLabel(float angle) {
+uint8_t* windDirectionLabel(double angle) {
 
 	switch ((int)angle) {
 		case 0:
