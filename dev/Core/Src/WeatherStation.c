@@ -67,7 +67,7 @@ T_GraphicsData GraphicsData() {
 }
 
 // rotation left of a float array
-void rotation_left(float* tab) {
+void rotation_left(double* tab) {
     if(tab != NULL) {
         float first = tab[0];
 
@@ -80,13 +80,13 @@ void rotation_left(float* tab) {
 }
 
 // add data at the end of one array
-void add(float* tab, float data) {
+void add(double* tab, double data) {
     rotation_left(tab);
     tab[GRAPHICS_SIZE - 1] = data;
 }
 
 // add all acquisitions in database
-void addGraphicsData(T_GraphicsData* gd, float temp, float hum, float press, float rain, float wspeed, float wdir) {
+void addGraphicsData(T_GraphicsData* gd, double temp, double hum, double press, double rain, double wspeed, double wdir) {
     add(gd->temperatures, temp);
     add(gd->humidities, hum);
     add(gd->pressures, press);
@@ -116,7 +116,7 @@ T_DataToSave DataToSave() {
 }
 
 // add all data to save
-void addDataToSave(T_DataToSave * ds, float temp, float hum, float press, float rain, float wspeed, float wdir) {
+void addDataToSave(T_DataToSave * ds, double temp, double hum, double press, double rain, double wspeed, double wdir) {
     int nb = ds->nb_data;
 
     ds->temperatures[nb] = temp;
