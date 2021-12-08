@@ -45,30 +45,5 @@ double gettemp ();
 double gethumidity ();
 
 
-#define    BOOT_TIME        5 //ms
-
-#define TX_BUF_DIM          1000
-
-/* Private variables ---------------------------------------------------------*/
-static uint32_t data_raw_pressure;
-static float pressure_hPa;
-
-/* Extern variables ----------------------------------------------------------*/
-
-/* Private functions ---------------------------------------------------------*/
-
-/*
- *   WARNING:
- *   Functions declare in this section are defined at the end of this file
- *   and are strictly related to the hardware platform used.
- *
- */
-
-static int32_t platform_write_LPS(void *handle, uint8_t reg, const uint8_t *bufp,
-                              uint16_t len);
-static int32_t platform_read_LPS(void *handle, uint8_t reg, uint8_t *bufp,
-                             uint16_t len);
-
-double getpressure ();
 
 #endif /* INC_SENSOR_H_ */
