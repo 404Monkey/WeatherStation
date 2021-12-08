@@ -264,7 +264,7 @@ void aggregate() {
 	double humidity = gethumidity();
 	//HAL_Delay(1000); // La pression ne veut pas se lire s'il n'y a pas ce delai
 	double pressure = getpressure();
-	double rainfall = captureRainfall(&htim2, DELAY);
+	double rainfall = captureRainfall(&htim2);
 	double wspeed = captureWindspeed(&WIND_TICK, DELAY);
 	double wdir = getDirection(HAL_ADC_GetValue(&hadc3));
 
