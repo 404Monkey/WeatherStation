@@ -37,6 +37,7 @@
 #include "WeatherStation.h"
 #include "draw_frame_graph.h"
 #include "i2csensors.h"
+#include "pressure.h"
 #include "Raingauge.h"
 #include "Windspeed.h"
 #include "windDirection.h"
