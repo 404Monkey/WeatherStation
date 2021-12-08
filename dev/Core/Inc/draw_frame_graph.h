@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <locale.h>
 #include "../../Drivers/BSP/STM32746G-Discovery/stm32746g_discovery.h"
 #include "../../Drivers/BSP/STM32746G-Discovery/stm32746g_discovery_lcd.h"
 #include "../../Drivers/BSP/STM32746G-Discovery/stm32746g_discovery_ts.h"
@@ -23,8 +22,8 @@
  * Texts for the displaying of each measurand
  */
 //Temperature
-#define TEMP_TITLE "Temperature (°C)"
-#define TEMP_Y_LABEL "(°C)"
+#define TEMP_TITLE "Temperature (C)"
+#define TEMP_Y_LABEL "(C)"
 
 //Humidity
 #define HUM_TITLE "Humidity (%)"

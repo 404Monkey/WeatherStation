@@ -13,9 +13,6 @@ uint8_t IS_HOME;
 
 void init_screen() {
 
-	//To allow display degree symbol "°"
-	setlocale(LC_ALL, "");
-
 	BSP_LCD_Init();
 
 	//(uint32_t)0xC0000000 : Address for the Frame Buffer
@@ -88,7 +85,7 @@ void display_screen(float values[], uint8_t nbMeasures, char* Ylabel, char* titl
 		return;
 	}
 
-	if (nbMeasures > 50) {
+	if (nbMeasures > 24) {
 
 		display_error_measures(0);
 		return;
@@ -97,6 +94,9 @@ void display_screen(float values[], uint8_t nbMeasures, char* Ylabel, char* titl
 	display_header(title, nbMeasures);
 
 	display_graph(values, nbMeasures, Ylabel);
+
+	//Drawing for the return button
+	draw_return_button(480 - (BSP_LCD_GetYSize()/RATIO)/2, (BSP_LCD_GetYSize()/RATIO)/2, 40);
 }
 
 void display_header(char* title, uint8_t nbMeasures) {
@@ -163,14 +163,14 @@ void display_graph(float measures[], uint8_t nbMeasures, char* YLabel) {
 	int stepX = axisXLng/nbStepX;
 
 	/* Drawing steps on the X Axis */
-	for (int i = 0; i < nbStepX-1; i++) {
+	for (int i = 0; i < nbMeasures; i++) {
 
 		//From 0 to size-1, so N = "size" measures
 
-		BSP_LCD_DrawLine(OFFSET + (i+1)*stepX, BSP_LCD_GetYSize() - OFFSET + 2, OFFSET + (i+1)*stepX, BSP_LCD_GetYSize() - OFFSET - 2);//X Axis
+		BSP_LCD_DrawLine(OFFSET*2 + (i+1)*stepX, BSP_LCD_GetYSize() - OFFSET + 2, OFFSET*2 + (i+1)*stepX, BSP_LCD_GetYSize() - OFFSET - 2);//X Axis
 
 		//The X coordinate of the current point is the same as the current step
-		measurePoints[i].X = OFFSET + (i+1)*stepX;
+		measurePoints[i].X = OFFSET*2 + (i+1)*stepX;
 	}
 
 	//Label for the steps on the Y axis
@@ -204,6 +204,12 @@ void display_graph(float measures[], uint8_t nbMeasures, char* YLabel) {
 
 	/* Amplitude of the measurements and steps between each of them */
 	float amp = max - min;
+
+	//To counter an array of the same values
+	if (amp == 0) {
+		amp = 1;
+	}
+
 	float stepOfMeasure = amp/(nbStepY-1);
 
 	/* Drawing steps on Y Axis */
@@ -250,9 +256,6 @@ void display_graph(float measures[], uint8_t nbMeasures, char* YLabel) {
 
 		BSP_LCD_DrawLine(measurePoints[i].X, measurePoints[i].Y, measurePoints[i+1].X, measurePoints[i+1].Y);
 	}
-
-	//Drawing for the return button
-	draw_return_button(480 - (BSP_LCD_GetYSize()/RATIO)/2, (BSP_LCD_GetYSize()/RATIO)/2, 40);
 }
 
 void display_histo(uint16_t values[], uint8_t nbMeasures, char* YLabel, char* title) {
@@ -331,7 +334,7 @@ void display_error_measures(uint8_t bool) {
 		BSP_LCD_DisplayStringAt(0, 166,(uint8_t*) "There must be at least 3 measurements for the measurand !", CENTER_MODE);
 	} else {
 
-		BSP_LCD_DisplayStringAt(0, 166,(uint8_t*) "There should be a maximum of 50 measurements for the measurand !", CENTER_MODE);
+		BSP_LCD_DisplayStringAt(0, 166,(uint8_t*) "There should be a maximum of 24 measurements for the measurand !", CENTER_MODE);
 	}
 
 	//Drawing for the return button
