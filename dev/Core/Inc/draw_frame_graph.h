@@ -78,12 +78,12 @@ void display_home(void);
 
 /**
  * Display the header and the graph corresponding to a measurand on the screen
- * param1, float values[] : array of measures
+ * param1,  values[] : array of measures
  * param2, uint8_t nbMeasures : number of measures
  * param3, char* Ylabel : Label of the Y Axis
  * param4, char* title : title of the screen
  */
-void display_screen(float values[], uint8_t nbMeasures, char* YLabel, char* title);
+void display_screen(double values[], uint8_t nbMeasures, char* YLabel, char* title);
 
 /**
  * Display the header of the graph's/histo's screen
@@ -94,11 +94,11 @@ void display_header(char* title, uint8_t nbMeasures);
 
 /**
  * Display the graph with the curve corresponding to the parameters
- * param1, float values[] : array of measures
+ * param1, double values[] : array of measures
  * param2, uint8_t nbMeasures : number of measures
  * param3, char* Ylabel : Label of the Y Axis
  */
-void display_graph(float values[], uint8_t nbMeasures, char* YLabel);
+void display_graph(double values[], uint8_t nbMeasures, char* YLabel);
 
 /**
  * Display the histogram corresponding to the wind direction
@@ -148,22 +148,22 @@ void update_screen(void);
 
 /**
  * Find the min value from the array
- * param1, float values[] : array of values
+ * param1, double values[] : array of values
  * param2, uint8_t size : array length
  */
-float min_value(float values[], uint8_t size);
+double min_value(double values[], uint8_t size);
 
 /**
  * Find the max value from the array
- * param1, float values[] : array of values
+ * param1, double values[] : array of values
  * param2, uint8_t size : array length
  */
-float max_value(float values[], uint8_t size);
+double max_value(double values[], uint8_t size);
 
 /**
  * Convert the angle in degrees of the wind direction in the corresponding label
  */
-uint8_t* windDirectionLabel(float angle);
+uint8_t* windDirectionLabel(double angle);
 
 /**
  * Handler for the interrupt from the touch screen
