@@ -4,10 +4,9 @@
 
 TS_StateTypeDef *TS_State;
 
-/**
- * Flag to know if it's dashboard
- */
 uint8_t IS_HOME;
+
+uint8_t SCREEN_INDEX;
 
 //----------Functions----------//
 
@@ -341,6 +340,39 @@ void display_error_measures(uint8_t bool) {
 	draw_return_button(480 - (BSP_LCD_GetYSize()/RATIO)/2, (BSP_LCD_GetYSize()/RATIO)/2, 40);
 }
 
+void update_screen(void) {
+
+	if (IS_HOME == 1) {
+
+		display_home();
+	} else {
+
+		switch (SCREEN_INDEX) {
+			case 1:
+				display_screen(Graphics_data.temperatures, GRAPHICS_SIZE, TEMP_Y_LABEL, TEMP_TITLE);
+				break;
+			case 2:
+				display_screen(Graphics_data.humidities, GRAPHICS_SIZE, HUM_Y_LABEL, HUM_TITLE);
+				break;
+			case 3:
+				display_screen(Graphics_data.pressures, GRAPHICS_SIZE, PRES_Y_LABEL, PRES_TITLE);
+				break;
+			case 4:
+				display_screen(Graphics_data.wind_speeds, GRAPHICS_SIZE, WS_Y_LABEL, WS_TITLE);
+				break;
+			case 5:
+				display_home();
+				break;
+			case 6:
+				display_screen(Graphics_data.rainfalls, GRAPHICS_SIZE, RAIN_Y_LABEL, RAIN_TITLE);
+				break;
+			default:
+				display_home();
+				break;
+		}
+	}
+}
+
 float min_value(float values[], uint8_t size) {
 
 	float min = values[0];
@@ -361,6 +393,8 @@ float max_value(float values[], uint8_t size) {
 	float max = values[0];
 
 	for (int i = 1; i < size; i++) {
+
+		printf("%d",(int)values[i]);
 
 		if (values[i] > max) {
 
@@ -384,30 +418,42 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 	if(IS_HOME == 1) {
 		if (X>20 && X<153 && Y>112 && Y<182) {
 
+			SCREEN_INDEX = 1;
+
 			//Temperature
 			display_screen(Graphics_data.temperatures, GRAPHICS_SIZE, TEMP_Y_LABEL, TEMP_TITLE);
 		}
 		else if (X>173 && X<306 && Y>112 && Y<182) {
+
+			SCREEN_INDEX = 2;
 
 			//Humidity
 			display_screen(Graphics_data.humidities, GRAPHICS_SIZE, HUM_Y_LABEL, HUM_TITLE);
 		}
 		else if (X>326 && X<459 && Y>112 && Y<182) {
 
+			SCREEN_INDEX = 3;
+
 			//Pressure
 			display_screen(Graphics_data.pressures, GRAPHICS_SIZE, PRES_Y_LABEL, PRES_TITLE);
 		}
 		else if (X>20 && X<153 && Y>192 && Y<262) {
+
+			SCREEN_INDEX = 4;
 
 			//Wind speed
 			display_screen(Graphics_data.wind_speeds, GRAPHICS_SIZE, WS_Y_LABEL, WS_TITLE);
 		}
 		else if (X>173 && X<306 && Y>192 && Y<262) {
 
+			SCREEN_INDEX = 5;
+
 			//Wind direction
 			//do stuff
 		}
 		else if (X>326 && X<459 && Y>192 && Y<262) {
+
+			SCREEN_INDEX = 6;
 
 			//Pulvimeter
 			display_screen(Graphics_data.rainfalls, GRAPHICS_SIZE, RAIN_Y_LABEL, RAIN_TITLE);
@@ -417,6 +463,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 	{
 		if (X>390 && Y<90)
 		{
+			SCREEN_INDEX = 0;
+
 			display_home();
 		}
 	}

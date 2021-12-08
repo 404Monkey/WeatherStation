@@ -4,6 +4,25 @@
 #include "../../Drivers/BSP/STM32746G-Discovery/stm32746g_discovery_ts.h"
 #include "WeatherStation.h"
 
+//Extern variables//
+
+/**
+ * Flag to know if it's dashboard
+ */
+extern uint8_t IS_HOME;
+
+/**
+ * Index of the screen
+ * 0 : Home
+ * 1 : Temperature
+ * 2 : Humidity
+ * 3 : Pressure
+ * 4 : Wind speed
+ * 5 : Wind direction
+ * 6 : Rain
+ */
+extern uint8_t SCREEN_INDEX;
+
 //----------Constants----------//
 
 /*
@@ -121,6 +140,11 @@ void display_timestamp(void);
  * 1+ <=> too few values
  */
 void display_error_measures(uint8_t bool);
+
+/**
+ * Update the displaying depending of the SCREEN_INDEX
+ */
+void update_screen(void);
 
 /**
  * Find the min value from the array
