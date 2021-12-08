@@ -25,6 +25,7 @@
 #include "dma2d.h"
 #include "i2c.h"
 #include "ltdc.h"
+#include "rtc.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -36,6 +37,8 @@
 #include "WeatherStation.h"
 #include "draw_frame_graph.h"
 #include "i2csensors.h"
+#include "Raingauge.h"
+#include "Windspeed.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -65,7 +68,8 @@ set to 'Yes') calls __io_putchar() */
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+int DELAY = 5; //(htim5.Instance->ARR + 1) * (htim5.Instance->CCR1 + 1) * 5 *0.000000001; // * (1/200000000);
+double WIND_TICK = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -76,7 +80,13 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
+{
+	if (htim->Instance==TIM1)
+	{
+		WIND_TICK++;
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -117,13 +127,19 @@ int main(void)
   MX_ADC3_Init();
   MX_TIM1_Init();
   MX_TIM2_Init();
+  MX_RTC_Init();
   /* USER CODE BEGIN 2 */
 
   init_screen();
 
   WeatherStationInit();
 
-  HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1);
+  RaingaugeStart(&htim2); // timer de la pluie
+  HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1); // timer de l'aggrégation
+  HAL_TIM_IC_Start_IT(&htim1,TIM_CHANNEL_1); // timer de la vitesse du vent
+  HAL_RTC_Init(&hrtc);
+
+  printf("démarrage du programme !\r\n");
 
   display_home();
 
@@ -138,8 +154,25 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
+	  /*
+	  RTC_DateTypeDef myDate;
+	  HAL_RTC_GetDate(&hrtc, &myDate, RTC_FORMAT_BIN);
+	  RTC_TimeTypeDef myTime;
+	  HAL_RTC_GetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
+	  printf("year : %d \r\n", myDate.Year);
+	  printf("month : %d \r\n", myDate.Month);
+	  printf("date : %d \r\n", myDate.Date);
+	  printf("hours : %d \r\n", myTime.Hours);
+	  printf("minutes : %d \r\n", myTime.Minutes);
+	  printf("secondes : %d \r\n", myTime.Seconds);
+
+
+	  //HAL_RTC_GetTime(&hrtc, sTime, RTC_FORMAT_BIN);
+	  */
+
 	  HAL_GPIO_TogglePin (GPIOI, GPIO_PIN_1);
 	  HAL_Delay (1000);   /* Insert delay 100 ms */
+
   }
   /* USER CODE END 3 */
 }
@@ -161,8 +194,9 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 12;
@@ -192,14 +226,16 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LTDC|RCC_PERIPHCLK_USART1
-                              |RCC_PERIPHCLK_I2C1|RCC_PERIPHCLK_I2C3;
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LTDC|RCC_PERIPHCLK_RTC
+                              |RCC_PERIPHCLK_USART1|RCC_PERIPHCLK_I2C1
+                              |RCC_PERIPHCLK_I2C3;
   PeriphClkInitStruct.PLLSAI.PLLSAIN = 72;
   PeriphClkInitStruct.PLLSAI.PLLSAIR = 3;
   PeriphClkInitStruct.PLLSAI.PLLSAIQ = 2;
   PeriphClkInitStruct.PLLSAI.PLLSAIP = RCC_PLLSAIP_DIV2;
   PeriphClkInitStruct.PLLSAIDivQ = 1;
   PeriphClkInitStruct.PLLSAIDivR = RCC_PLLSAIDIVR_2;
+  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
   PeriphClkInitStruct.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
   PeriphClkInitStruct.I2c1ClockSelection = RCC_I2C1CLKSOURCE_PCLK1;
   PeriphClkInitStruct.I2c3ClockSelection = RCC_I2C3CLKSOURCE_PCLK1;
@@ -225,15 +261,17 @@ void aggregate() {
 	double humidity = gethumidity();
 	HAL_Delay(1000); // La pression ne veut pas se lire s'il n'y a pas ce delai
 	double pressure = getpressure();
-	//double rainfall = getrainfall(); // TODO
-	//double wspeed = getwspeed(); // TODO
+	double rainfall = captureRainfall(&htim2, DELAY);
+	double wspeed = captureWindspeed(&WIND_TICK, DELAY);
 	//double wdir = getwdir(); // TODO
 
-	updateWeatherStation(&Weather_station, &Graphics_data, &Data_to_save, temperature, humidity, pressure, 0, 0, 0);
+	updateWeatherStation(&Weather_station, &Graphics_data, &Data_to_save, temperature, humidity, pressure, rainfall, wspeed, 0);
 
 	printf("temp :%f \r\n", (double)Weather_station.temperature);
 	printf("hum : %f \r\n", (double)Weather_station.humidity);
 	printf("press : %f \r\n", (double)Weather_station.pressure);
+	printf("rain : %f \r\n", (double)Weather_station.rainfall);
+	printf("wspeed : %f \r\n", (double)Weather_station.wind_speed);
 }
 
 /* USER CODE END 4 */
