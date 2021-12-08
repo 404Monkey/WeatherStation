@@ -7,6 +7,7 @@
 
 #ifndef INC_WINDDIRECTION_H_
 #define INC_WINDDIRECTION_H_
+
 #include "main.h"
 #include "adc.h"
 #include "usart.h"
@@ -14,6 +15,6 @@
 
 
 
-double getDirection();
+double getDirection(int code);
 
 #endif /* INC_WINDDIRECTION_H_ */

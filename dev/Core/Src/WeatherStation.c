@@ -21,7 +21,7 @@ T_WeatherStation WeatherStationDefault() {
 }
 
 // Constructor with args
-T_WeatherStation WeatherStation(float temp, float hum, float press, float rain, float wspeed, float wdir) {
+T_WeatherStation WeatherStation(double temp, double hum, double press, double rain, double wspeed, double wdir) {
 
     T_WeatherStation ws;
 
@@ -35,7 +35,7 @@ T_WeatherStation WeatherStation(float temp, float hum, float press, float rain, 
     return ws;
 }
 
-void updateWeatherStation(T_WeatherStation* ws, T_GraphicsData* gd, T_DataToSave * ds, float temp, float hum, float press, float rain, float wspeed, float wdir) {
+void updateWeatherStation(T_WeatherStation* ws, T_GraphicsData* gd, T_DataToSave * ds, double temp, double hum, double press, double rain, double wspeed, double wdir) {
     ws->temperature = temp;
     ws->humidity = hum;
     ws->pressure = press;

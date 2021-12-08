@@ -169,8 +169,8 @@ int main(void)
 	  printf("secondes : %d \r\n", myTime.Seconds);
 
 
-	  //HAL_RTC_GetTime(&hrtc, sTime, RTC_FORMAT_BIN);
-	  */
+	  HAL_RTC_GetTime(&hrtc, sTime, RTC_FORMAT_BIN);
+*/
 
 	  HAL_GPIO_TogglePin (GPIOI, GPIO_PIN_1);
 	  HAL_Delay (1000);   /* Insert delay 100 ms */
