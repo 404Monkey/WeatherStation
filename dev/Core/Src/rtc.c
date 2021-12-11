@@ -69,10 +69,10 @@ void MX_RTC_Init(void)
   {
     Error_Handler();
   }
-  sDate.WeekDay = RTC_WEEKDAY_WEDNESDAY;
-  sDate.Month = RTC_MONTH_DECEMBER;
+  sDate.WeekDay = RTC_WEEKDAY_MONDAY;
+  sDate.Month = RTC_MONTH_JANUARY;
   sDate.Date = 0x1;
-  sDate.Year = 2021;
+  sDate.Year = 0x21;
 
   if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BCD) != HAL_OK)
   {
@@ -117,7 +117,32 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* rtcHandle)
 }
 
 /* USER CODE BEGIN 1 */
+T_Time getTime() {
 
+	T_Time time;
+
+	uint16_t YearStart = 2000;
+
+	RTC_DateTypeDef sDate;
+	RTC_TimeTypeDef sTime;
+
+	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+
+	time.year = sDate.Year + YearStart;
+	time.month = sDate.Month;
+	time.day = sDate.Date;
+	time.weekday = sDate.WeekDay;
+	time.hour = sTime.Hours;
+	time.minute = sTime.Minutes;
+	time.seconds = sTime.Seconds;
+
+	return time;
+}
+
+void displayTime(T_Time t){
+	printf("Date : %u-%u-%u : %u:%u:%u \r\n", t.day, t.month, t.year, t.hour, t.minute, t.seconds);
+}
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

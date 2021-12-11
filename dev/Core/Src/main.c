@@ -157,22 +157,6 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	  /*
-	  RTC_DateTypeDef myDate;
-	  HAL_RTC_GetDate(&hrtc, &myDate, RTC_FORMAT_BIN);
-	  RTC_TimeTypeDef myTime;
-	  HAL_RTC_GetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
-	  printf("year : %d \r\n", myDate.Year);
-	  printf("month : %d \r\n", myDate.Month);
-	  printf("date : %d \r\n", myDate.Date);
-	  printf("hours : %d \r\n", myTime.Hours);
-	  printf("minutes : %d \r\n", myTime.Minutes);
-	  printf("secondes : %d \r\n", myTime.Seconds);
-
-
-	  HAL_RTC_GetTime(&hrtc, sTime, RTC_FORMAT_BIN);
-*/
-
 	  HAL_GPIO_TogglePin (GPIOI, GPIO_PIN_1);
 	  HAL_Delay (1000);   /* Insert delay 100 ms */
 

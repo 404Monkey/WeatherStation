@@ -34,13 +34,22 @@ extern "C" {
 extern RTC_HandleTypeDef hrtc;
 
 /* USER CODE BEGIN Private defines */
-
+typedef struct T_Time {
+	uint16_t year;
+	uint16_t month;
+	uint16_t day;
+	uint16_t weekday;
+	uint16_t hour;
+	uint16_t minute;
+	uint16_t seconds;
+} T_Time;
 /* USER CODE END Private defines */
 
 void MX_RTC_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+T_Time getTime();
+void displayTime(T_Time t);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
