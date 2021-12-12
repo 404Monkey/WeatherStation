@@ -72,6 +72,7 @@ set to 'Yes') calls __io_putchar() */
 /* USER CODE BEGIN PV */
 int DELAY = 5; //(htim5.Instance->ARR + 1) * (htim5.Instance->CCR1 + 1) * 5 *0.000000001; // * (1/200000000);
 double WIND_TICK = 0;
+int alarm_flag = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -146,7 +147,6 @@ int main(void)
 
   display_home();
 
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -157,6 +157,13 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
+	  if(alarm_flag == 1){ // s'active toutes les minutes
+		  T_Time time = getTime();
+		  displayTime(time);
+		  alarm_flag = 0;
+	  }
+
+	  /*
 	  HAL_GPIO_TogglePin (GPIOI, GPIO_PIN_1);
 	  HAL_Delay (1000);   /* Insert delay 100 ms */
 
@@ -242,6 +249,12 @@ PUTCHAR_PROTOTYPE
 	return ch;
 }
 
+void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
+{
+	printf("Alarm has occured!\r\n\n");
+	alarm_flag = 1;
+}
+
 void aggregate() {
 
 	double temperature = gettemp();
@@ -254,6 +267,8 @@ void aggregate() {
 
 	updateWeatherStation(&Weather_station, &Graphics_data, &Data_to_save, temperature, humidity, pressure, rainfall, wspeed, wdir);
 
+
+	printf("|| ================ || \r\n");
 	printf("temp :%f \r\n", (double)Weather_station.temperature);
 	printf("hum : %f \r\n", (double)Weather_station.humidity);
 	printf("press : %f \r\n", (double)Weather_station.pressure);

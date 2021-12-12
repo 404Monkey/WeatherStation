@@ -21,7 +21,7 @@ double captureRainfall(TIM_HandleTypeDef *htim2){
 	__HAL_TIM_SetCounter(htim2,0);
 	//Compute rainfall then display and return it
 	double rainfall = counter * CAPACITY;
-	displayRainfall(counter, rainfall);
+	//displayRainfall(counter, rainfall);
 
 	return rainfall;
 }

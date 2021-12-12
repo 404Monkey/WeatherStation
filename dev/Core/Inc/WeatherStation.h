@@ -3,7 +3,9 @@
 * @date 01/12/21
 */
 
-#pragma once
+
+#ifndef INC_WEATHERSTATION_H_
+#define INC_WEATHERSTATION_H_
 
 #define GRAPHICS_SIZE 24 // size of the history arrays
 #define DATA_SIZE 100 // size of the history arrays
@@ -65,3 +67,6 @@ T_GraphicsData Graphics_data;
 T_DataToSave Data_to_save;
 
 void WeatherStationInit();
+
+#endif /* INC_WEATHERSTATION_H_ */
+

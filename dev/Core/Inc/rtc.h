@@ -35,13 +35,13 @@ extern RTC_HandleTypeDef hrtc;
 
 /* USER CODE BEGIN Private defines */
 typedef struct T_Time {
-	uint16_t year;
-	uint16_t month;
-	uint16_t day;
-	uint16_t weekday;
-	uint16_t hour;
-	uint16_t minute;
-	uint16_t seconds;
+	uint8_t year;
+	uint8_t month;
+	uint8_t day;
+	uint8_t weekday;
+	uint8_t hour;
+	uint8_t minute;
+	uint8_t seconds;
 } T_Time;
 /* USER CODE END Private defines */
 
