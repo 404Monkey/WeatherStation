@@ -7,33 +7,37 @@
  */
 #include "sd.h"
 
-char buff [1000] = {};
+char buff [2000] = {};
 char number[100];
 char rc [] = "\r\n";
 char coma []= ";";
-char wtext[100] = "numero de mesure; temperature; humidity; pressure; wind speed; wind direction; rain \r\n";
+char wtext[100] = "dated; time; temperature; humidity; pressure; wind speed; wind direction; rain\r\n";
 
 void initSD(){
-	printf("initialisation de la carte SD\r\n");
+
+
+	printf("card initializationSD\r\n");
+
+	//##-1- Checking the presence of the sd card ##########################
 	if(BSP_SD_IsDetected() == 1){
+
+		//##-2- Opening the "data.csv" file###########################
 		if(f_open(&SDFile, "DATA.CSV", FA_READ) != FR_OK)
 		{
-			/* 'STM32.TXT' file Open for read Error */
-			printf("Init : fichier non existant \r\n");
+			printf("Init: non-existent file \r\n");
 		}
 		else
 		{
-			/*##-8- Read data from the text file ###########################*/
+			//##-3- Read data from the text file ###########################
 			res = f_read(&SDFile, rtext, sizeof(rtext), (UINT*)&bytesread);
 
 			if((bytesread =! 0) || (res != FR_OK))
 			{
-				/* 'STM32.TXT' file Read or EOF Error */
-				printf("init : fichier vide \r\n");
+				printf("init: empty file\r\n");
 			}
 			else
 			{
-				/*##-9- Close the open text file #############################*/
+				//##-4- Close the open text file #############################
 				f_close(&SDFile);
 			}
 		}
@@ -49,7 +53,7 @@ void initSD(){
 			//Open file for writing (Create)
 			if(f_open(&SDFile, "Data.csv", FA_OPEN_ALWAYS | FA_WRITE) != FR_OK)
 			{
-				Error_Handler();
+				printf("cannot open SD card\r\n");
 			}
 			else
 			{
@@ -57,12 +61,12 @@ void initSD(){
 				res = f_write(&SDFile, wtext, strlen(wtext), (void *)&byteswritten);
 				if((byteswritten == 0) || (res != FR_OK))
 				{
-					Error_Handler();
+					printf("cannot write to SD card \r\n");
 				}
 				else
 				{
 					f_close(&SDFile);
-					printf("initialisation reussi \r\n");
+					printf("successful initialization \r\n");
 				}
 
 			}
@@ -70,13 +74,16 @@ void initSD(){
 		f_mount(&SDFatFS, (TCHAR const*)NULL, 0);
 	}else
 	{
-		printf("aucune carte est monte \r\n");
+		printf("no card is mounted \r\n");
 	}
 }
 
 
+
+
 void saveSD(){
-	char buff [1000] = {};
+
+	// prepation of data for saving ###################################
 	for(int i = 0; i<Data_to_save.nb_data; i++){
 		itoa(i,number,10) ;
 		strcat(buff, number);
@@ -112,32 +119,33 @@ void saveSD(){
 		strcat(buff, number);
 		memset(number, 0, sizeof number);
 		strcat(buff, rc);
-		printf("sauvegarde en cours \r\n");
+
+
+		printf("backup in progress \r\n");
 		printf("valeur du buffeur %s \r\n", buff);
 
+
+
+
+		//Save protocole #########################################
 		if(BSP_SD_IsDetected() == 1){
-			//Open file for writing (Create)
 			FATFS_LinkDriver(&SD_Driver, SDPath);
 			f_mount(&SDFatFS, (TCHAR const*)NULL, 0);
-			printf("1\r\n");
 			if(f_open(&SDFile, "Data.csv", FA_OPEN_APPEND | FA_WRITE) != FR_OK)
 			{
-				printf("impossible d'ouvrire la carte SD \r\n");
-				f_close(&SDFile);
+				printf("cannot open SD card\r\n");
 			}
 			else
 			{
-
-				printf("3\r\n");
 				res = f_write(&SDFile, buff, strlen(buff), (void *)&byteswritten);
 				if((byteswritten == 0) || (res != FR_OK))
 				{
-					printf("impossible d'écrire sur la carte SD \r\n");
+					printf("cannot write to SD card \r\n");
 				}
 				else
 				{
 
-					printf("sauvegarde reussite\r\n");
+					printf("save success\r\n");
 					f_close(&SDFile);
 				}
 
@@ -149,7 +157,7 @@ void saveSD(){
 
 		else
 		{
-			printf("aucune carte est monte \r\n");
+			printf("no card is mounted\r\n");
 		}
 
 

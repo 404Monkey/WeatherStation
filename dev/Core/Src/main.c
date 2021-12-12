@@ -1,23 +1,23 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  * @author : Benjamin Chevais
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file           : main.c
+ * @brief          : Main program body
+ ******************************************************************************
+ * @attention
+ *
+ * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
+ * All rights reserved.</center></h2>
+ *
+ * This software component is licensed by ST under BSD 3-Clause license,
+ * the "License"; You may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at:
+ *                        opensource.org/licenses/BSD-3-Clause
+ *
+ * @author : Benjamin Chevais
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -76,6 +76,8 @@ set to 'Yes') calls __io_putchar() */
 /* USER CODE BEGIN PV */
 int DELAY = 5; //(htim5.Instance->ARR + 1) * (htim5.Instance->CCR1 + 1) * 5 *0.000000001; // * (1/200000000);
 double WIND_TICK = 0;
+RTC_TimeTypeDef sTime;
+RTC_DateTypeDef sDate;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -139,35 +141,43 @@ int main(void)
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
 
-  WeatherStationInit();
+	WeatherStationInit();
 
-  init_screen();
+	init_screen();
 
-  RaingaugeStart(&htim2); // timer de la pluie
-  HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1); // timer de l'aggrégation
-  HAL_TIM_IC_Start_IT(&htim1,TIM_CHANNEL_1); // timer de la vitesse du vent
-  HAL_RTC_Init(&hrtc);
-  HAL_ADC_Start(&hadc3); //Starts conversion Analog to Digital.
+	RaingaugeStart(&htim2); // timer de la pluie
+	HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1); // timer de l'aggrégation
+	HAL_TIM_IC_Start_IT(&htim1,TIM_CHANNEL_1); // timer de la vitesse du vent
+	HAL_RTC_Init(&hrtc);
+	HAL_ADC_Start(&hadc3); //Starts conversion Analog to Digital.
 
-  printf("démarrage du programme !\r\n");
+	printf("démarrage du programme !\r\n");
 
-  display_home();
+	display_home();
 
-  initSD();
+	initSD();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
+	while (1)
+	{
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+		HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+		HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
-	  HAL_GPIO_TogglePin (GPIOI, GPIO_PIN_1);
-	  HAL_Delay (1000);   /* Insert delay 100 ms */
 
-  }
+
+
+
+		printf("Heure : %d.%d.%d\r\n",sTime.Hours,sTime.Minutes,sTime.Seconds);
+
+		HAL_GPIO_TogglePin (GPIOI, GPIO_PIN_1);
+		HAL_Delay (1000);   /* Insert delay 100 ms */
+
+	}
   /* USER CODE END 3 */
 }
 
@@ -245,8 +255,8 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 PUTCHAR_PROTOTYPE
 {
-/* Place your implementation of fputc here */
-/* e.g. write a character to the USART2 and Loop until the end of transmission */
+	/* Place your implementation of fputc here */
+	/* e.g. write a character to the USART2 and Loop until the end of transmission */
 	HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 100);
 
 	return ch;
@@ -305,7 +315,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
+	/* User can add his own implementation to report the HAL error return state */
 	printf("error\r\n");
   /* USER CODE END Error_Handler_Debug */
 }
@@ -321,7 +331,7 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
+	/* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
