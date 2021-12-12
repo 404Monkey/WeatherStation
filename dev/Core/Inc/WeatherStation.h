@@ -7,6 +7,8 @@
 #ifndef INC_WEATHERSTATION_H_
 #define INC_WEATHERSTATION_H_
 
+#include <stdio.h>
+
 #define GRAPHICS_SIZE 24 // size of the history arrays
 #define DATA_SIZE 100 // size of the history arrays
 
@@ -44,7 +46,8 @@ typedef struct T_DataToSave {
 
 T_DataToSave DataToSave(); // T_DataToSave constructor
 void addDataToSave(T_DataToSave * ds, double temp, double hum, double press, double rain, double wspeed, double wdir); // add all data to save
-void clearBuffers(T_DataToSave* ds);
+void clearBuffers(T_DataToSave* ds); // Clear all the buffers of DataToSave
+
 
 // Definition of the Weather Station object
 typedef struct T_WeatherStation {
@@ -58,15 +61,29 @@ typedef struct T_WeatherStation {
 
 T_WeatherStation WeatherStationDefault(); // Default Constructor
 T_WeatherStation WeatherStation(double temp, double hum, double press, double rain, double wspeed, double wdir); // Constructor with args
-void updateWeatherStation(T_WeatherStation* ws, T_GraphicsData* gd, T_DataToSave * ds, double temp, double hum, double press, double rain, double wspeed, double wdir); // Update the current values of the WeatherStation
-
+void updateWeatherStation(T_WeatherStation* ws, T_GraphicsData* gd, T_DataToSave * ds, double temp, double hum, double press, double rain, double wspeed, double wdir); // Update all the weather station structures
 
 // Constants
 T_WeatherStation Weather_station;
 T_GraphicsData Graphics_data;
 T_DataToSave Data_to_save;
 
-void WeatherStationInit();
+void WeatherStationInit(); // Initialize the 3 structures
+
+
+// Struct to Store all time and date information
+typedef struct T_Time {
+	uint8_t year;
+	uint8_t month;
+	uint8_t day;
+	uint8_t weekday;
+	uint8_t hour;
+	uint8_t minute;
+	uint8_t seconds;
+} T_Time;
+
+T_Time getTime(); // Give the date and the time
+void displayTime(T_Time t); // Display a date
 
 #endif /* INC_WEATHERSTATION_H_ */
 

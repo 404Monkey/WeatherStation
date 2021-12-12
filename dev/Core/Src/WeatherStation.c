@@ -5,8 +5,9 @@
 
 #include <stdlib.h>
 #include "WeatherStation.h"
+#include "rtc.h"
 
-// Default Constructor
+// Default T_WeatherStation Constructor
 T_WeatherStation WeatherStationDefault() {
 
     T_WeatherStation ws;
@@ -20,7 +21,7 @@ T_WeatherStation WeatherStationDefault() {
     return ws;
 }
 
-// Constructor with args
+// T_WeatherStation Constructor with args
 T_WeatherStation WeatherStation(double temp, double hum, double press, double rain, double wspeed, double wdir) {
 
     T_WeatherStation ws;
@@ -35,6 +36,7 @@ T_WeatherStation WeatherStation(double temp, double hum, double press, double ra
     return ws;
 }
 
+// Update all the weather station structures
 void updateWeatherStation(T_WeatherStation* ws, T_GraphicsData* gd, T_DataToSave * ds, double temp, double hum, double press, double rain, double wspeed, double wdir) {
     ws->temperature = temp;
     ws->humidity = hum;
@@ -85,7 +87,7 @@ void add(double* tab, double data) {
     tab[GRAPHICS_SIZE - 1] = data;
 }
 
-// add all acquisitions in database
+// add all acquisitions in GraphicsData
 void addGraphicsData(T_GraphicsData* gd, double temp, double hum, double press, double rain, double wspeed, double wdir) {
     add(gd->temperatures, temp);
     add(gd->humidities, hum);
@@ -129,6 +131,7 @@ void addDataToSave(T_DataToSave * ds, double temp, double hum, double press, dou
     ds->nb_data += 1;
 };
 
+// Clear all the buffers of DataToSave
 void clearBuffers(T_DataToSave* ds){
     for (int i = 0; i < ds->nb_data; i++) {
         ds->temperatures[i] = 0;
@@ -142,8 +145,37 @@ void clearBuffers(T_DataToSave* ds){
     ds->nb_data = 0;
 }
 
+// Initialize the 3 structures
 void WeatherStationInit() {
     Weather_station = WeatherStationDefault();
     Graphics_data = GraphicsData();
     Data_to_save = DataToSave();
 }
+
+// Give the date and the time
+T_Time getTime() {
+
+	T_Time time;
+
+	RTC_DateTypeDef sDate;
+	RTC_TimeTypeDef sTime;
+
+	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+
+	time.year = sDate.Year;
+	time.month = sDate.Month;
+	time.day = sDate.Date;
+	time.weekday = sDate.WeekDay;
+	time.hour = sTime.Hours;
+	time.minute = sTime.Minutes;
+	time.seconds = sTime.Seconds;
+
+	return time;
+}
+
+// Display a date
+void displayTime(T_Time t){
+	printf("Date : %02d-%02d-%02d : %02d:%02u:%02u \r\n\n", t.day, t.month, t.year, t.hour, t.minute, t.seconds);
+}
+

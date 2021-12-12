@@ -72,7 +72,7 @@ set to 'Yes') calls __io_putchar() */
 /* USER CODE BEGIN PV */
 int DELAY = 5; //(htim5.Instance->ARR + 1) * (htim5.Instance->CCR1 + 1) * 5 *0.000000001; // * (1/200000000);
 double WIND_TICK = 0;
-int alarm_flag = 0;
+int alarmA = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -83,13 +83,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
-{
-	if (htim->Instance==TIM1)
-	{
-		WIND_TICK++;
-	}
-}
+
 /* USER CODE END 0 */
 
 /**
@@ -137,15 +131,15 @@ int main(void)
 
   init_screen();
 
-  RaingaugeStart(&htim2); // timer de la pluie
-  HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1); // timer de l'aggrégation
-  HAL_TIM_IC_Start_IT(&htim1,TIM_CHANNEL_1); // timer de la vitesse du vent
-  HAL_RTC_Init(&hrtc);
-  HAL_ADC_Start(&hadc3); //Starts conversion Analog to Digital.
+  RaingaugeStart(&htim2); // Timer de la pluie
+  HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1); // Timer de l'aggrégation
+  HAL_TIM_IC_Start_IT(&htim1,TIM_CHANNEL_1); // Timer de la vitesse du vent
+  HAL_RTC_Init(&hrtc); // démarre la RTC / AlarmA pour la carte SD
+  HAL_ADC_Start(&hadc3); // Starts conversion Analog to Digital.
 
-  printf("démarrage du programme !\r\n");
+  printf("démarrage du programme !\r\n\n");
 
-  display_home();
+  display_home(); // Affiche l'écran d'accueil
 
   /* USER CODE END 2 */
 
@@ -157,16 +151,10 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	  if(alarm_flag == 1){ // s'active toutes les minutes
-		  T_Time time = getTime();
-		  displayTime(time);
-		  alarm_flag = 0;
-	  }
-
 	  /*
 	  HAL_GPIO_TogglePin (GPIOI, GPIO_PIN_1);
-	  HAL_Delay (1000);   /* Insert delay 100 ms */
-
+	  HAL_Delay (1000);
+	  */
   }
   /* USER CODE END 3 */
 }
@@ -249,17 +237,38 @@ PUTCHAR_PROTOTYPE
 	return ch;
 }
 
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
+{
+	if (htim->Instance==TIM1)
+	{
+		WIND_TICK++;
+	}
+}
+
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 {
-	printf("Alarm has occured!\r\n\n");
-	alarm_flag = 1;
+	printf("Alarm A !\r\n\n");
+	T_Time time = getTime();
+	displayTime(time);
+}
+
+void displayWeatherStation(T_WeatherStation ws) {
+
+	printf("|| ================ || \r\n");
+	printf("temp :%f \r\n", (double)ws.temperature);
+	printf("hum : %f \r\n", (double)ws.humidity);
+	printf("press : %f \r\n", (double)ws.pressure);
+	printf("rain : %f \r\n", (double)ws.rainfall);
+	printf("wspeed : %f \r\n", (double)ws.wind_speed);
+	printf("wdir : %f \r\n", (double)ws.wind_direction);
+	printf("|| ================ || \r\n");
+
 }
 
 void aggregate() {
 
 	double temperature = gettemp();
 	double humidity = gethumidity();
-	//HAL_Delay(1000); // La pression ne veut pas se lire s'il n'y a pas ce delai
 	double pressure = getpressure();
 	double rainfall = captureRainfall(&htim2);
 	double wspeed = captureWindspeed(&WIND_TICK, DELAY);
@@ -267,40 +276,12 @@ void aggregate() {
 
 	updateWeatherStation(&Weather_station, &Graphics_data, &Data_to_save, temperature, humidity, pressure, rainfall, wspeed, wdir);
 
-
-	printf("|| ================ || \r\n");
-	printf("temp :%f \r\n", (double)Weather_station.temperature);
-	printf("hum : %f \r\n", (double)Weather_station.humidity);
-	printf("press : %f \r\n", (double)Weather_station.pressure);
-	printf("rain : %f \r\n", (double)Weather_station.rainfall);
-	printf("wspeed : %f \r\n", (double)Weather_station.wind_speed);
-	printf("wdir : %f \r\n", (double)Weather_station.wind_direction);
+	//displayWeatherStation(Weather_station);
 
 	update_screen();
 }
 
 /* USER CODE END 4 */
-
-/**
-  * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM14 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  htim : TIM handle
-  * @retval None
-  */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-  /* USER CODE BEGIN Callback 0 */
-
-  /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM14) {
-    HAL_IncTick();
-  }
-  /* USER CODE BEGIN Callback 1 */
-
-  /* USER CODE END Callback 1 */
-}
 
 /**
   * @brief  This function is executed in case of error occurrence.

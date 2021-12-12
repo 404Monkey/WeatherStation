@@ -81,7 +81,7 @@ void MX_RTC_Init(void)
   /** Enable the Alarm A
   */
   sAlarm.AlarmTime.Hours = 0x0;
-  sAlarm.AlarmTime.Minutes = 0x1;
+  sAlarm.AlarmTime.Minutes = 0x0;
   sAlarm.AlarmTime.Seconds = 0x0;
   sAlarm.AlarmTime.SubSeconds = 0x0;
   sAlarm.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
@@ -142,32 +142,7 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* rtcHandle)
 }
 
 /* USER CODE BEGIN 1 */
-T_Time getTime() {
 
-	T_Time time;
-
-	//uint8_t YearStart = 2000;
-
-	RTC_DateTypeDef sDate;
-	RTC_TimeTypeDef sTime;
-
-	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-
-	time.year = sDate.Year; // + YearStart;
-	time.month = sDate.Month;
-	time.day = sDate.Date;
-	time.weekday = sDate.WeekDay;
-	time.hour = sTime.Hours;
-	time.minute = sTime.Minutes;
-	time.seconds = sTime.Seconds;
-
-	return time;
-}
-
-void displayTime(T_Time t){
-	printf("Date : %02d-%02d-%02d : %02d:%02u:%02u \r\n", t.day, t.month, t.year, t.hour, t.minute, t.seconds);
-}
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
