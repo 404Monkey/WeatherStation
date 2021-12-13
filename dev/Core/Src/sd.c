@@ -186,6 +186,8 @@ void saveSD(){
 			}
 			Data_to_save.nb_data = 0;
 			FATFS_UnLinkDriver(SDPath);
+			memset(buff, 0, sizeof buff);
+			//clearBuffers(T_DataToSave);
 		}
 
 	}

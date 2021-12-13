@@ -169,6 +169,7 @@ T_Time DefaultTime(){
 	time.hour = 0;
 	time.minute = 0;
 	time.seconds = 0;
+
 	return time;
 }
 
