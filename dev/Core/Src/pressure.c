@@ -23,7 +23,7 @@ double getpressure ()
 	/* Enable Block Data Update */
 	lps22hh_block_data_update_set(&dev_ctx, PROPERTY_ENABLE);
 	/* Set Output Data Rate */
-	lps22hh_data_rate_set(&dev_ctx, LPS22HH_10_Hz_LOW_NOISE);
+	lps22hh_data_rate_set(&dev_ctx, LPS22HH_1_Hz_LOW_NOISE);
 
 	/* Read samples in polling mode (no int) */
 		/* Read output only if new value is available */

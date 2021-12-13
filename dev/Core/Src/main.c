@@ -286,6 +286,7 @@ void aggregate() {
 	double wdir = getDirection(HAL_ADC_GetValue(&hadc3));
 
 	T_Time time = getTime();
+	displayTime(time);
 
 	updateWeatherStation(&Weather_station, &Graphics_data, &Data_to_save, temperature, humidity, pressure, rainfall, wspeed, wdir, time);
 

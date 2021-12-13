@@ -41,7 +41,7 @@ double getDirection(int code)
 		degree = 225.0;
 	}
 	// North
-	else if (3000 <= code && code < 3600)
+	else if (3300 <= code && code < 3600)
 	{
 		degree = 0.0;
 	}

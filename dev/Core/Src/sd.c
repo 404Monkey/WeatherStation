@@ -172,9 +172,20 @@ void saveSD(){
 
 			//Unlink the driver ###########################
 			printf("save success\r\n");
-			FATFS_UnLinkDriver(SDPath);
 			memset(buff, 0, sizeof buff);
-			clearBuffers(T_DataToSave);
+			for(int i = 0; i<Data_to_save.nb_data; i++){
+				Data_to_save.dates[i].seconds = 0;
+				Data_to_save.dates[i].minute = 0;
+				Data_to_save.dates[i].hour = 0;
+				Data_to_save.temperatures[i] = 0;
+				Data_to_save.pressures[i] = 0;
+				Data_to_save.wind_directions[i] = 0;
+				Data_to_save.wind_speeds[i] = 0;
+				Data_to_save.wind_directions[i] = 0;
+				Data_to_save.humidities[i] = 0;
+			}
+			Data_to_save.nb_data = 0;
+			FATFS_UnLinkDriver(SDPath);
 		}
 
 	}
@@ -182,6 +193,7 @@ void saveSD(){
 	{
 		printf("no card is mounted\r\n");
 		memset(buff, 0, sizeof buff);
+		FATFS_UnLinkDriver(SDPath);
 	}
 }
 
