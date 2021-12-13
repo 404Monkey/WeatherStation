@@ -18,11 +18,12 @@ T_WeatherStation WeatherStationDefault() {
     ws.rainfall = 0;
     ws.wind_speed = 0;
     ws.wind_direction = 0;
+    ws.time = getTime();
     return ws;
 }
 
 // T_WeatherStation Constructor with args
-T_WeatherStation WeatherStation(double temp, double hum, double press, double rain, double wspeed, double wdir) {
+T_WeatherStation WeatherStation(double temp, double hum, double press, double rain, double wspeed, double wdir, T_Time t) {
 
     T_WeatherStation ws;
 
@@ -32,21 +33,23 @@ T_WeatherStation WeatherStation(double temp, double hum, double press, double ra
     ws.rainfall = rain;
     ws.wind_speed = wspeed;
     ws.wind_direction = wdir;
+    ws.time = t;
 
     return ws;
 }
 
 // Update all the weather station structures
-void updateWeatherStation(T_WeatherStation* ws, T_GraphicsData* gd, T_DataToSave * ds, double temp, double hum, double press, double rain, double wspeed, double wdir) {
+void updateWeatherStation(T_WeatherStation* ws, T_GraphicsData* gd, T_DataToSave * ds, double temp, double hum, double press, double rain, double wspeed, double wdir, T_Time t) {
     ws->temperature = temp;
     ws->humidity = hum;
     ws->pressure = press;
     ws->rainfall = rain;
     ws->wind_speed = wspeed;
     ws->wind_direction = wdir;
+    ws->time = t;
 
     addGraphicsData(gd, temp, hum, press, rain, wspeed, wdir);
-    addDataToSave(ds, temp, hum, press, rain, wspeed, wdir);
+    addDataToSave(ds, temp, hum, press, rain, wspeed, wdir, t);
 }
 
 
@@ -110,6 +113,7 @@ T_DataToSave DataToSave() {
         ds.rainfalls[i] = 0;
         ds.wind_speeds[i] = 0;
         ds.wind_directions[i] = 0;
+        ds.dates[i] = DefaultTime();
     }
 
     ds.nb_data = 0;
@@ -118,7 +122,7 @@ T_DataToSave DataToSave() {
 }
 
 // add all data to save
-void addDataToSave(T_DataToSave * ds, double temp, double hum, double press, double rain, double wspeed, double wdir) {
+void addDataToSave(T_DataToSave * ds, double temp, double hum, double press, double rain, double wspeed, double wdir, T_Time time) {
     int nb = ds->nb_data;
 
     ds->temperatures[nb] = temp;
@@ -127,6 +131,7 @@ void addDataToSave(T_DataToSave * ds, double temp, double hum, double press, dou
     ds->rainfalls[nb] = rain;
     ds->wind_speeds[nb] = wspeed;
     ds->wind_directions[nb] = wdir;
+    ds->dates[nb] = time;
 
     ds->nb_data += 1;
 };
@@ -140,6 +145,7 @@ void clearBuffers(T_DataToSave* ds){
         ds->rainfalls[i] = 0;
         ds->wind_speeds[i] = 0;
         ds->wind_directions[i] = 0;
+        ds->dates[i] = DefaultTime();
     }
 
     ds->nb_data = 0;
@@ -150,6 +156,18 @@ void WeatherStationInit() {
     Weather_station = WeatherStationDefault();
     Graphics_data = GraphicsData();
     Data_to_save = DataToSave();
+}
+
+// Default Constructors of T_Time
+T_Time DefaultTime(){
+	T_Time time;
+	time.year = 0;
+	time.month = 0;
+	time.day = 0;
+	time.weekday = 0;
+	time.hour = 0;
+	time.minute = 0;
+	time.seconds = 0;
 }
 
 // Give the date and the time

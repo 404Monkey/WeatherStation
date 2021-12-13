@@ -47,6 +47,7 @@
 #include "sd.h"
 #include <stdio.h>
 #include <string.h>
+#include "sd.h"
 
 #ifdef __GNUC__
 /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf
@@ -143,6 +144,7 @@ int main(void)
   HAL_TIM_IC_Start_IT(&htim1,TIM_CHANNEL_1); // Timer de la vitesse du vent
   HAL_RTC_Init(&hrtc); // démarre la RTC / AlarmA pour la carte SD
   HAL_ADC_Start(&hadc3); // Starts conversion Analog to Digital.
+  initSD(); // Initialize ths sd card
 
   printf("démarrage du programme !\r\n\n");
 
@@ -157,8 +159,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-		HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
 	  /*
 	  HAL_GPIO_TogglePin (GPIOI, GPIO_PIN_1);
@@ -260,8 +260,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 {
 	printf("Alarm A !\r\n\n");
-	T_Time time = getTime();
-	displayTime(time);
+	saveSD();
 }
 
 void displayWeatherStation(T_WeatherStation ws) {
@@ -286,7 +285,9 @@ void aggregate() {
 	double wspeed = captureWindspeed(&WIND_TICK, DELAY);
 	double wdir = getDirection(HAL_ADC_GetValue(&hadc3));
 
-	updateWeatherStation(&Weather_station, &Graphics_data, &Data_to_save, temperature, humidity, pressure, rainfall, wspeed, wdir);
+	T_Time time = getTime();
+
+	updateWeatherStation(&Weather_station, &Graphics_data, &Data_to_save, temperature, humidity, pressure, rainfall, wspeed, wdir, time);
 
 	//displayWeatherStation(Weather_station);
 

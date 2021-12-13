@@ -38,6 +38,7 @@ typedef struct T_DataToSave {
 	double rainfalls[DATA_SIZE];
 	double wind_speeds[DATA_SIZE];
 	double wind_directions[DATA_SIZE];
+	T_Time dates[DATA_SIZE];
 
     // to know how much data we have
     int nb_data;
@@ -57,11 +58,12 @@ typedef struct T_WeatherStation {
 	double rainfall;
 	double wind_speed;
 	double wind_direction; // degrees
+	T_Time time;
 } T_WeatherStation;
 
 T_WeatherStation WeatherStationDefault(); // Default Constructor
-T_WeatherStation WeatherStation(double temp, double hum, double press, double rain, double wspeed, double wdir); // Constructor with args
-void updateWeatherStation(T_WeatherStation* ws, T_GraphicsData* gd, T_DataToSave * ds, double temp, double hum, double press, double rain, double wspeed, double wdir); // Update all the weather station structures
+T_WeatherStation WeatherStation(double temp, double hum, double press, double rain, double wspeed, double wdir, T_Time t); // Constructor with args
+void updateWeatherStation(T_WeatherStation* ws, T_GraphicsData* gd, T_DataToSave * ds, double temp, double hum, double press, double rain, double wspeed, double wdir, T_Time t); // Update all the weather station structures
 
 // Constants
 T_WeatherStation Weather_station;
@@ -82,6 +84,7 @@ typedef struct T_Time {
 	uint8_t seconds;
 } T_Time;
 
+T_Time DefaultTime(); // Default Constructor of T_Time
 T_Time getTime(); // Give the date and the time
 void displayTime(T_Time t); // Display a date
 
