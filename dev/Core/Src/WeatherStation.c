@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "WeatherStation.h"
 #include "rtc.h"
+#include "main.h"
 
 // Default T_WeatherStation Constructor
 T_WeatherStation WeatherStationDefault() {

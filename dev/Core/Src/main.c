@@ -78,6 +78,11 @@ set to 'Yes') calls __io_putchar() */
 int DELAY = 5; //(htim5.Instance->ARR + 1) * (htim5.Instance->CCR1 + 1) * 5 *0.000000001; // * (1/200000000);
 double WIND_TICK = 0;
 int alarmA = 0;
+
+RTC_DateTypeDef sDate;
+RTC_TimeTypeDef sTime;
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -135,20 +140,20 @@ int main(void)
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
 
-  WeatherStationInit();
+	WeatherStationInit();
 
-  init_screen();
+	init_screen();
 
-  RaingaugeStart(&htim2); // Timer de la pluie
-  HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1); // Timer de l'aggrégation
-  HAL_TIM_IC_Start_IT(&htim1,TIM_CHANNEL_1); // Timer de la vitesse du vent
-  HAL_RTC_Init(&hrtc); // démarre la RTC / AlarmA pour la carte SD
-  HAL_ADC_Start(&hadc3); // Starts conversion Analog to Digital.
-  initSD(); // Initialize ths sd card
+	RaingaugeStart(&htim2); // Timer de la pluie
+	HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1); // Timer de l'aggrégation
+	HAL_TIM_IC_Start_IT(&htim1,TIM_CHANNEL_1); // Timer de la vitesse du vent
+	HAL_RTC_Init(&hrtc); // démarre la RTC / AlarmA pour la carte SD
+	HAL_ADC_Start(&hadc3); // Starts conversion Analog to Digital.
+	initSD(); // Initialize ths sd card
 
-  printf("démarrage du programme !\r\n\n");
+	printf("démarrage du programme !\r\n\n");
 
-  display_home(); // Affiche l'écran d'accueil
+	display_home(); // Affiche l'écran d'accueil
 
   /* USER CODE END 2 */
 
@@ -159,12 +164,13 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
-	  /*
+		HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+		HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+		/*
 	  HAL_GPIO_TogglePin (GPIOI, GPIO_PIN_1);
 	  HAL_Delay (1000);
-	  */
-  }
+		 */
+	}
   /* USER CODE END 3 */
 }
 
@@ -293,7 +299,6 @@ void aggregate() {
 	//displayWeatherStation(Weather_station);
 
 	update_screen();
-	saveSD();
 }
 
 /* USER CODE END 4 */
