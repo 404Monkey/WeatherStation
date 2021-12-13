@@ -11,6 +11,9 @@ char buff [10000] = {};
 char number[10] = {};
 const char rc [] = "\r\n";
 const char coma []= ";";
+const char point[] = ":";
+const char space[] = " ";
+const char slash[] = "/";
 const char wtext[] = "date; time; temperature; humidity; pressure; wind speed; wind direction; rain\r\n";
 
 void initSD(){
@@ -65,7 +68,33 @@ void saveSD(){
 
 	// prepation of data for saving ###########################
 	for(int i = 0; i<Data_to_save.nb_data; i++){
-		itoa(i,number,10) ;
+
+		itoa(Data_to_save.dates[i].day,number,10);
+		strcat(buff, number);
+		memset(number, 0, sizeof number);
+		strcat(buff, slash);
+
+		itoa(Data_to_save.dates[i].month,number,10);
+		strcat(buff, number);
+		memset(number, 0, sizeof number);
+		strcat(buff, slash);
+
+		itoa(Data_to_save.dates[i].year,number,10);
+		strcat(buff, number);
+		memset(number, 0, sizeof number);
+		strcat(buff, coma);
+
+		itoa(Data_to_save.dates[i].hour,number,10);
+		strcat(buff, number);
+		memset(number, 0, sizeof number);
+		strcat(buff, point);
+
+		itoa(Data_to_save.dates[i].minute,number,10);
+		strcat(buff, number);
+		memset(number, 0, sizeof number);
+		strcat(buff, point);
+
+		itoa(Data_to_save.dates[i].seconds,number,10);
 		strcat(buff, number);
 		memset(number, 0, sizeof number);
 		strcat(buff, coma);
@@ -145,6 +174,7 @@ void saveSD(){
 			printf("save success\r\n");
 			FATFS_UnLinkDriver(SDPath);
 			memset(buff, 0, sizeof buff);
+			clearBuffers(T_DataToSave);
 		}
 
 	}
