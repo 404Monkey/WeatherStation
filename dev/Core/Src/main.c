@@ -1,23 +1,23 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  * @author : Benjamin Chevais
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file           : main.c
+ * @brief          : Main program body
+ ******************************************************************************
+ * @attention
+ *
+ * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
+ * All rights reserved.</center></h2>
+ *
+ * This software component is licensed by ST under BSD 3-Clause license,
+ * the "License"; You may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at:
+ *                        opensource.org/licenses/BSD-3-Clause
+ *
+ * @author : Benjamin Chevais
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -44,6 +44,7 @@
 #include "Raingauge.h"
 #include "Windspeed.h"
 #include "windDirection.h"
+#include "sd.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -133,9 +134,9 @@ int main(void)
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
 
-  WeatherStationInit();
+	WeatherStationInit();
 
-  init_screen();
+	init_screen();
 
   RaingaugeStart(&htim2); // Timer de la pluie
   HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1); // Timer de l'aggrégation
@@ -151,11 +152,13 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
+	while (1)
+	{
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+		HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+		HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
 	  /*
 	  HAL_GPIO_TogglePin (GPIOI, GPIO_PIN_1);
@@ -239,8 +242,8 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 PUTCHAR_PROTOTYPE
 {
-/* Place your implementation of fputc here */
-/* e.g. write a character to the USART2 and Loop until the end of transmission */
+	/* Place your implementation of fputc here */
+	/* e.g. write a character to the USART2 and Loop until the end of transmission */
 	HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 100);
 
 	return ch;
@@ -288,6 +291,7 @@ void aggregate() {
 	//displayWeatherStation(Weather_station);
 
 	update_screen();
+	saveSD();
 }
 
 /* USER CODE END 4 */
@@ -299,11 +303,8 @@ void aggregate() {
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
+	/* User can add his own implementation to report the HAL error return state */
+	printf("error\r\n");
   /* USER CODE END Error_Handler_Debug */
 }
 
@@ -318,7 +319,7 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
+	/* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
