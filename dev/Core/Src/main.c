@@ -135,9 +135,9 @@ int main(void)
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
 
-	WeatherStationInit();
+  WeatherStationInit();
 
-	init_screen();
+  init_screen();
 
   RaingaugeStart(&htim2); // Timer de la pluie
   HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1); // Timer de l'aggrégation
