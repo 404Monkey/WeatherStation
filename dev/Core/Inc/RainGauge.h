@@ -1,13 +1,13 @@
 /**************************************************************
-   Raingauge, from WeatherStation library, is available for STM32F746G platform to manage
+   RainGauge, from WeatherStation library, is available for STM32F746G platform to manage
    our connected WeatherStation.
 
    Licensed under University of Poitiers M1 Connected Objects by TD1 GRP1.
-   Produced by Henintsoa Andrianarivony.
+   Author: Henintsoa Andrianarivony.
  **************************************************************/
 
-#ifndef __RAINGAUGE__
-#define __RAINGAUGE__
+#ifndef __INC_RAINGAUGE_H__
+#define __INC_RAINGAUGE_H__
 
 /* -------------------- LIBRARIES -------------------- */
 #include "tim.h"
@@ -23,7 +23,7 @@ extern TIM_HandleTypeDef htim2;			// Instance of timer/counter
 void RaingaugeStart(TIM_HandleTypeDef *htim2);
 // - Give the rainfall saved since the last call function
 double captureRainfall(TIM_HandleTypeDef *htim2);
-// - Monitoring data via UART serial port
-void displayRainfall(long counter, double rainfall);
+// - Monitoring data via UART serial port (private function)
+static void displayRainfall(long counter, double rainfall);
 
-#endif
+#endif /* __INC_RAINGAUGE_H__ */

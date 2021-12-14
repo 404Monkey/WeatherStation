@@ -1,16 +1,32 @@
+/**************************************************************
+   Raingauge, from WeatherStation library, is available for STM32F746G platform to manage
+   our connected WeatherStation.
+
+   Licensed under University of Poitiers M1 Connected Objects by TD1 GRP1.
+   Author: Antonin Giroire.
+ **************************************************************/
+
+#ifndef __DRAWFRAMEGRAPH__
+#define __DRAWFRAMEGRAPH__
+
+/* -------------------- LIBRARIES -------------------- */
+
 #include <stdio.h>
 #include "../../Drivers/BSP/STM32746G-Discovery/stm32746g_discovery.h"
 #include "../../Drivers/BSP/STM32746G-Discovery/stm32746g_discovery_lcd.h"
 #include "../../Drivers/BSP/STM32746G-Discovery/stm32746g_discovery_ts.h"
 #include "WeatherStation.h"
 
-//Extern variables//
 
-/**
- * Flag to know if it's dashboard
- */
+/* ------------------- DECLARATIONS ------------------ */
+
+// EXTERN VARIABLES
+
+// - Flag telling if the current dashboard is home
 extern uint8_t IS_HOME;
 
+// - Flag telling the current dashboard
+extern uint8_t SCREEN_INDEX;
 /**
  * Index of the screen
  * 0 : Home
@@ -21,25 +37,18 @@ extern uint8_t IS_HOME;
  * 5 : Wind direction
  * 6 : Rain
  */
-extern uint8_t SCREEN_INDEX;
 
-//----------Constants----------//
+// CONSTANTS
 
-/*
- * Ratio to divide the screen (1/3)
- * ! DO NOT EDIT !
- */
+// - Ratio to divide the screen (1/3)
+//! DO NOT EDIT !
 #define RATIO 3
 
-/**
- * General offset for the GUI
- * ! DO NOT EDIT !
- */
+// - General offset for the GUI
+// ! DO NOT EDIT !
 #define OFFSET 20
 
-/**
- * Texts for the displaying of each measurand
- */
+// - Texts displaying each measurand
 //Temperature
 #define TEMP_TITLE "Temperature (C)"
 #define TEMP_Y_LABEL "(C)"
@@ -64,8 +73,7 @@ extern uint8_t SCREEN_INDEX;
 #define WD_TITLE "Wind direction"
 #define WD_Y_LABEL ""
 
-//----------Functions----------//
-
+// FUNCTIONS
 /**
  * Hardware initialization of the screen
  */
@@ -169,3 +177,5 @@ uint8_t* windDirectionLabel(double angle);
  * Handler for the interrupt from the touch screen
  */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
+
+#endif /* __DRAWFRAMEGRAPH__ */

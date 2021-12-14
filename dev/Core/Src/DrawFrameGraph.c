@@ -1,20 +1,26 @@
-#include "draw_frame_graph.h"
+/**************************************************************
+   Raingauge, from WeatherStation library, is available for STM32F746G platform to manage
+   our connected WeatherStation.
 
-//----------Global variables----------//
+   Licensed under University of Poitiers M1 Connected Objects by TD1 GRP1.
+   Author: Antonin Giroire.
+ **************************************************************/
+
+#include <DrawFrameGraph.h>
+
+//---------- Global variables ----------//
 
 TS_StateTypeDef *TS_State;
-
 uint8_t IS_HOME;
-
 uint8_t SCREEN_INDEX;
 
-//----------Functions----------//
+//------------- Functions -------------//
 
 void init_screen() {
 
 	BSP_LCD_Init();
 
-	//(uint32_t)0xC0000000 : Address for the Frame Buffer
+	/*(uint32_t)0xC0000000 : Address for the Frame Buffer */
 	BSP_LCD_LayerDefaultInit(LTDC_ACTIVE_LAYER, (uint32_t)0xC0000000);
 
 	BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
@@ -27,7 +33,7 @@ void display_home(void) {
 
 	IS_HOME = 1;
 
-	//Set LCD Foreground Layer
+	/* Set LCD Foreground Layer */
 	BSP_LCD_SelectLayer(LTDC_ACTIVE_LAYER);
 
 	/* Clear the LCD */
@@ -65,7 +71,6 @@ void display_home(void) {
 	draw_main_button(20, 192,(uint8_t *)WS_TITLE, (uint8_t *) value);
 
 	measure = Weather_station.wind_direction;
-	//sprintf((char *)value, "%.2f", measure);
 	draw_main_button(173, 192,(uint8_t *) WD_TITLE, windDirectionLabel(measure));
 
 	measure = Weather_station.rainfall;
@@ -100,7 +105,7 @@ void display_screen(double values[], uint8_t nbMeasures, char* Ylabel, char* tit
 
 void display_header(char* title, uint8_t nbMeasures) {
 
-	//Set LCD Foreground Layer
+	/* Set LCD Foreground Layer */
 	BSP_LCD_SelectLayer(LTDC_ACTIVE_LAYER);
 
 	/* Clear the LCD */
@@ -201,7 +206,7 @@ void display_graph(double measures[], uint8_t nbMeasures, char* YLabel) {
 	//Font for the labels
 	BSP_LCD_SetFont(&Font8);
 
-	/* Amplitude of the measurements and steps between each of them */
+	//Amplitude of the measurements and steps between each of them
 	double amp = max - min;
 
 	//To counter an array of the same values
@@ -261,8 +266,6 @@ void display_histo(uint16_t values[], uint8_t nbMeasures, char* YLabel, char* ti
 
 	display_header(title, nbMeasures);
 
-	//Draw histo
-
 	//Drawing for the return button
 	draw_return_button(480 - (BSP_LCD_GetYSize()/RATIO)/2, (BSP_LCD_GetYSize()/RATIO)/2, 40);
 }
@@ -313,7 +316,7 @@ void display_error_measures(uint8_t bool) {
 	//Set LCD Foreground Layer
 	BSP_LCD_SelectLayer(LTDC_ACTIVE_LAYER);
 
-	/* Clear the LCD */
+	//Clear the LCD
 	BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
 	BSP_LCD_Clear(LCD_COLOR_WHITE);
 

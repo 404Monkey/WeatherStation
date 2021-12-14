@@ -1,13 +1,15 @@
-/*
- * sensor.h
- *
- *  Created on: Nov 27, 2021
- *      Author: theo
- */
+/**************************************************************
+   i2CSensors, from WeatherStation library, is available for STM32F746G platform to manage
+   our connected WeatherStation.
 
-#ifndef INC_SENSOR_H_
-#define INC_SENSOR_H_
+   Licensed under University of Poitiers M1 Connected Objects by TD1 GRP1.
+   Author: Theo Biardeau.
+ **************************************************************/
 
+#ifndef __INC_SENSOR_H__
+#define __INC_SENSOR_H__
+
+/* -------------------- LIBRARIES -------------------- */
 #include "main.h"
 #include "stm32f7xx_hal.h"
 #include <stdio.h>
@@ -16,8 +18,8 @@
 #include "hts221_reg.h"
 #include "lps22hh_reg.h"
 
+/* ------------------- DECLARATIONS ------------------ */
 #define SENSOR_BUS hi2c1
-
 static int16_t data_raw_humidity;
 static int16_t data_raw_temperature;
 static float humidity_perc;
@@ -39,11 +41,10 @@ typedef struct {
 } lin_t;
 
 float linear_interpolation(lin_t *lin, int16_t x);
+// - Give the current temperature
+double captureTemp ();
+// - Give the current humidity
+double captureHumidity ();
 
-double gettemp ();
 
-double gethumidity ();
-
-
-
-#endif /* INC_SENSOR_H_ */
+#endif /* __INC_SENSOR_H__ */

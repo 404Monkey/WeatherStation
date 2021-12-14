@@ -1,12 +1,15 @@
-/*
- * pressure.c
- *
- *  Created on: Dec 8, 2021
- *      Author: theo
- */
-#include "pressure.h"
+/**************************************************************
+   Pressure, from WeatherStation library, is available for STM32F746G platform to manage
+   our connected WeatherStation.
 
-double getpressure ()
+   Licensed under University of Poitiers M1 Connected Objects by TD1 GRP1.
+   Author: Theo Biardeau.
+ **************************************************************/
+
+#include <Pressure.h>
+
+// - Give the current pressure
+double capturePressure ()
 {
 	stmdev_ctx_t dev_ctx;
 	lps22hh_reg_t reg;
