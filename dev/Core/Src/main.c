@@ -41,12 +41,12 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <WindSpeed.h>
 #include "WeatherStation.h"
-#include "Sd.h"
+#include "WindSpeed.h"
+#include "WindDirection.h"
 #include "Pressure.h"
 #include "RainGauge.h"
-#include "WindDirection.h"
+#include "Sd.h"
 
 #ifdef __GNUC__
 /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf
