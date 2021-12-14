@@ -1,10 +1,10 @@
-/*
- * sensor.c
- *
- *  Created on: Nov 27, 2021
- *      Author: theo
- */
+/**************************************************************
+   i2csensors, from WeatherStation library, is available for STM32F746G platform to manage
+   our connected WeatherStation.
 
+   Licensed under University of Poitiers M1 Connected Objects by TD1 GRP1.
+   Author: Theo Biardeau.
+ **************************************************************/
 #include "i2csensors.h"
 
 float linear_interpolation(lin_t *lin, int16_t x)
@@ -50,25 +50,25 @@ double gettemp ()
 	dev_ctx.write_reg = platform_write;
 	dev_ctx.read_reg = platform_read;
 	dev_ctx.handle = &SENSOR_BUS;
-	/* Check device ID */
-	/* Read temperature calibration coefficient */
+    // Check device ID
+    // Read temperature calibration coefficient
 	lin_t lin_temp;
 	hts221_temp_adc_point_0_get(&dev_ctx, &lin_temp.x0);
 	hts221_temp_deg_point_0_get(&dev_ctx, &lin_temp.y0);
 	hts221_temp_adc_point_1_get(&dev_ctx, &lin_temp.x1);
 	hts221_temp_deg_point_1_get(&dev_ctx, &lin_temp.y1);
-	/* Enable Block Data Update */
+    // Enable Block Data Update
 	hts221_block_data_update_set(&dev_ctx, PROPERTY_ENABLE);
-	/* Set Output Data Rate */
+    // Set Output Data Rate
 	hts221_data_rate_set(&dev_ctx, HTS221_ODR_1Hz);
-	/* Device power on */
+    // Device power on
 	hts221_power_on_set(&dev_ctx, PROPERTY_ENABLE);
-	/* Read output only if new value is available */
+    // Read output only if new value is available
 	hts221_reg_t reg;
 	hts221_status_get(&dev_ctx, &reg.status_reg);
 
 	if (reg.status_reg.t_da) {
-		/* Read temperature data */
+        // Read temperature data
 		memset(&data_raw_temperature, 0x00, sizeof(int16_t));
 		hts221_temperature_raw_get(&dev_ctx, &data_raw_temperature);
 		temperature_degC = linear_interpolation(&lin_temp,
@@ -86,24 +86,25 @@ double gethumidity () {
 	dev_ctx.write_reg = platform_write;
 	dev_ctx.read_reg = platform_read;
 	dev_ctx.handle = &SENSOR_BUS;
-	/* Check device ID */
-	/* Read temperature calibration coefficient */
+    // Check device ID
+    // Read temperature calibration coefficient
 	lin_t lin_hum;
 	hts221_hum_adc_point_0_get(&dev_ctx, &lin_hum.x0);
 	hts221_hum_rh_point_0_get(&dev_ctx, &lin_hum.y0);
 	hts221_hum_adc_point_1_get(&dev_ctx, &lin_hum.x1);
 	hts221_hum_rh_point_1_get(&dev_ctx, &lin_hum.y1);
-	/* Enable Block Data Update */
+	// Enable Block Data Update
 	hts221_block_data_update_set(&dev_ctx, PROPERTY_ENABLE);
-	/* Set Output Data Rate */
+    // Set Output Data Rate
 	hts221_data_rate_set(&dev_ctx, HTS221_ODR_1Hz);
-	/* Device power on */
+    // Device power on
 	hts221_power_on_set(&dev_ctx, PROPERTY_ENABLE);
-	/* Read output only if new value is available */
+    // Read output only if new value is available
 	hts221_reg_t reg;
 	hts221_status_get(&dev_ctx, &reg.status_reg);
-	if (reg.status_reg.h_da) {
-		/* Read humidity data */
+
+    if (reg.status_reg.h_da) {
+        // Read humidity data
 		memset(&data_raw_humidity, 0x00, sizeof(int16_t));
 		hts221_humidity_raw_get(&dev_ctx, &data_raw_humidity);
 		humidity_perc = linear_interpolation(&lin_hum, data_raw_humidity);
@@ -115,10 +116,7 @@ double gethumidity () {
 		if (humidity_perc > 100) {
 			humidity_perc = 100;
 		}
+
 		return((double)humidity_perc);
-
 	}
-
 }
-
-

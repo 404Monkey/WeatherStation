@@ -1,13 +1,15 @@
-/*
- * sensor.h
- *
- *  Created on: Nov 27, 2021
- *      Author: theo
- */
+/**************************************************************
+   Windspeed, from WeatherStation library, is available for STM32F746G platform to manage
+   our connected WeatherStation.
+
+   Licensed under University of Poitiers M1 Connected Objects by TD1 GRP1.
+   Author: Theo Biardeau.
+ **************************************************************/
 
 #ifndef INC_SENSOR_H_
 #define INC_SENSOR_H_
 
+/* -------------------- LIBRARIES -------------------- */
 #include "main.h"
 #include "stm32f7xx_hal.h"
 #include <stdio.h>
@@ -16,8 +18,8 @@
 #include "hts221_reg.h"
 #include "lps22hh_reg.h"
 
+/* ------------------- DECLARATIONS ------------------ */
 #define SENSOR_BUS hi2c1
-
 static int16_t data_raw_humidity;
 static int16_t data_raw_temperature;
 static float humidity_perc;

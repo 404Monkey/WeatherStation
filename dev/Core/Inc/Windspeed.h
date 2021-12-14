@@ -3,7 +3,7 @@
    our connected WeatherStation.
 
    Licensed under University of Poitiers M1 Connected Objects by TD1 GRP1.
-   Produced by Theo Biardeau.
+   Author: Theo Biardeau.
  **************************************************************/
 
 #ifndef INC_WINDSPEED_H_
