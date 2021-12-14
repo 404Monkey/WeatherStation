@@ -75,9 +75,11 @@ set to 'Yes') calls __io_putchar() */
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-int DELAY = 5; //(htim5.Instance->ARR + 1) * (htim5.Instance->CCR1 + 1) * 5 *0.000000001; // * (1/200000000);
+int DELAY = 5;
 double WIND_TICK = 0;
-int alarmA = 0;
+int alarmA_sdcard = 0;
+acquisition_flag = 0; // define in main.h
+
 
 RTC_DateTypeDef sDate;
 RTC_TimeTypeDef sTime;
@@ -140,20 +142,20 @@ int main(void)
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
 
-	WeatherStationInit();
+	WeatherStationInit(); // initialize the global variables
 
-	init_screen();
+	init_screen(); // Initialize the screen
 
-	RaingaugeStart(&htim2); // Timer de la pluie
-	HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1); // Timer de l'aggrégation
-	HAL_TIM_IC_Start_IT(&htim1,TIM_CHANNEL_1); // Timer de la vitesse du vent
-	HAL_RTC_Init(&hrtc); // démarre la RTC / AlarmA pour la carte SD
+	RaingaugeStart(&htim2); // Timer of rain
+	HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1); // Aggregation Timer
+	HAL_TIM_IC_Start_IT(&htim1,TIM_CHANNEL_1); // Wind speed Timer
+	HAL_RTC_Init(&hrtc); // RTC launch / AlarmA for the SD card
 	HAL_ADC_Start(&hadc3); // Starts conversion Analog to Digital.
-	initSD(); // Initialize ths sd card
+	initSD(); // Initialize the sd card
 
 	printf("démarrage du programme !\r\n\n");
 
-	display_home(); // Affiche l'écran d'accueil
+	display_home(); // Display the home screen
 
   /* USER CODE END 2 */
 
@@ -166,6 +168,16 @@ int main(void)
     /* USER CODE BEGIN 3 */
 		HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 		HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+
+		if(acquisition_flag == 1) {
+			aggregate();
+			acquisition_flag = 0;
+		}
+
+		if(alarmA_sdcard == 1) {
+			saveSD();
+			alarmA_sdcard = 0;
+		}
 		/*
 	  HAL_GPIO_TogglePin (GPIOI, GPIO_PIN_1);
 	  HAL_Delay (1000);
@@ -266,7 +278,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 {
 	printf("Alarm A !\r\n\n");
-	saveSD();
+	alarmA_sdcard = 1;
 }
 
 void displayWeatherStation(T_WeatherStation ws) {

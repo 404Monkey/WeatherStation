@@ -42,7 +42,7 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
-
+int acquisition_flag;
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
