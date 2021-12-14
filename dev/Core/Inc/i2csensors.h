@@ -1,13 +1,13 @@
 /**************************************************************
-   Windspeed, from WeatherStation library, is available for STM32F746G platform to manage
+   i2CSensors, from WeatherStation library, is available for STM32F746G platform to manage
    our connected WeatherStation.
 
    Licensed under University of Poitiers M1 Connected Objects by TD1 GRP1.
    Author: Theo Biardeau.
  **************************************************************/
 
-#ifndef INC_SENSOR_H_
-#define INC_SENSOR_H_
+#ifndef __INC_SENSOR_H__
+#define __INC_SENSOR_H__
 
 /* -------------------- LIBRARIES -------------------- */
 #include "main.h"
@@ -41,11 +41,10 @@ typedef struct {
 } lin_t;
 
 float linear_interpolation(lin_t *lin, int16_t x);
+// - Give the current temperature
+double captureTemp ();
+// - Give the current humidity
+double captureHumidity ();
 
-double gettemp ();
 
-double gethumidity ();
-
-
-
-#endif /* INC_SENSOR_H_ */
+#endif /* __INC_SENSOR_H__ */

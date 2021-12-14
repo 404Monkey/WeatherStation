@@ -1,17 +1,20 @@
-/*
- * windDirection.c
- *
- *  Created on: Dec 7, 2021
- *      Author: pauli
- */
+/**************************************************************
+   WindDirection, from WeatherStation library, is available for STM32F746G platform to manage
+   our connected WeatherStation.
 
-// Do not forget to add this in the initialization
+   Licensed under University of Poitiers M1 Connected Objects by TD1 GRP1.
+   Author: Pauline Chiquet.
+ **************************************************************/
 
+#include "WindDirection.h"
+
+// - Give the current wind direction
 double getDirection(int code)
 {
-	//This function does the acquisition and returns the direction of the wind in degrees. It assumes 8 positions depending on the
-	//numerical value read by the ADC. We have determined theoretically and confirmed experimentally the range of numerical values
-	//for each of the 8 positions
+	// This function does the acquisition and returns the direction of the wind in degrees.
+	// It assumes 8 positions depending on the numerical value read by the ADC.
+	// We have determined theoretically and confirmed experimentally the range of numerical
+	// values for each of the 8 positions.
 
 	double degree = -1.0;
 

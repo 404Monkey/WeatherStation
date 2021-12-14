@@ -6,7 +6,7 @@
    Author: Theo Biardeau.
  **************************************************************/
 
-#include "Windspeed.h"
+#include <WindSpeed.h>
 
 // - Give the wind speed saved since the last call function
 double captureWindspeed(double *wind_tick, const int delay) {

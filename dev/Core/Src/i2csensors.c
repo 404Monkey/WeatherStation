@@ -1,11 +1,12 @@
 /**************************************************************
-   i2csensors, from WeatherStation library, is available for STM32F746G platform to manage
+   i2CSensors, from WeatherStation library, is available for STM32F746G platform to manage
    our connected WeatherStation.
 
    Licensed under University of Poitiers M1 Connected Objects by TD1 GRP1.
    Author: Theo Biardeau.
  **************************************************************/
-#include "i2csensors.h"
+
+#include <i2CSensors.h>
 
 float linear_interpolation(lin_t *lin, int16_t x)
 {
@@ -43,8 +44,8 @@ static int32_t platform_read(void *handle, uint8_t reg, uint8_t *bufp,
   return 0;
 }
 
-
-double gettemp ()
+// - Give the current temperature
+double captureTemp ()
 {
 	stmdev_ctx_t dev_ctx;
 	dev_ctx.write_reg = platform_write;
@@ -80,7 +81,8 @@ double gettemp ()
 
 }
 
-double gethumidity () {
+// - Give the current humidity
+double captureHumidity () {
 
 	stmdev_ctx_t dev_ctx;
 	dev_ctx.write_reg = platform_write;

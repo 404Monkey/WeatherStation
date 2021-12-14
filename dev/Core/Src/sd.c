@@ -1,11 +1,12 @@
+/**************************************************************
+   Sd, from WeatherStation library, is available for STM32F746G platform to manage
+   our connected WeatherStation.
 
-/*
- * Sdcard.c
- *
- *  Created on: Dec 8, 2021
- *      Author: theo
- */
-#include "sd.h"
+   Licensed under University of Poitiers M1 Connected Objects by TD1 GRP1.
+   Author: Theo Biardeau.
+ **************************************************************/
+
+#include <Sd.h>
 
 char buff [10000] = {};
 char number[10] = {};
@@ -17,14 +18,12 @@ const char slash[] = "/";
 const char wtext[] = "date; time; temperature; humidity; pressure; wind speed; wind direction; rain\r\n";
 
 void initSD(){
+	printf("Card initializationSD\r\n");
 
-
-	printf("card initializationSD\r\n");
-
-	//Checking the presence of the sd card ###########################
+	// Checking sd card presence ###########################
 	if(BSP_SD_IsDetected() == 1){
 
-		//Register the work area of the volume ###########################
+		// Register the work area of the volume ###########################
 		if(f_mount(&SDFatFS, (TCHAR const*)SDPath, 0) != FR_OK)
 		{
 			Error_Handler();
@@ -32,41 +31,39 @@ void initSD(){
 
 		else
 		{
-			//Open file for writing (Create if not present) ###########################
+			// Open file for writing (Create if not present) ###########################
 			if(f_open(&SDFile, "DATA.CSV", FA_OPEN_ALWAYS | FA_WRITE) != FR_OK)
 			{
-				printf("cannot open SD card\r\n");
+				printf("**ERROR: Cannot open SD card\r\n");
 			}
 			else
 			{
-				//Write to the csv file ###########################
+				// Write to the csv file ###########################
 				res = f_write(&SDFile, wtext, strlen(wtext), (void *)&byteswritten);
 				if((byteswritten == 0) || (res != FR_OK))
 				{
-					printf("cannot write to SD card \r\n");
+					printf("**ERROR: Cannot write to SD card \r\n");
 				}
 				else
 				{
 					f_close(&SDFile);
-					printf("successful initialization \r\n");
+					printf("**ERROR: Successful initialization \r\n");
 				}
 
 			}
 		}
-		//Unregister the work area of the volume ###########################
+		// Unregister the work area of the volume ###########################
 		f_mount(&SDFatFS, (TCHAR const*)NULL, 0);
 	}else
 	{
-		printf("no card is mounted \r\n");
+		printf("**ERROR: No card is mounted \r\n");
 	}
 }
 
 
-
-
 void saveSD(){
 
-	// prepation of data for saving ###########################
+	// Data preparation for saving ###########################
 	for(int i = 0; i<Data_to_save.nb_data; i++){
 
 		itoa(Data_to_save.dates[i].day,number,10);
@@ -130,11 +127,8 @@ void saveSD(){
 		strcat(buff, rc);
 	}
 
-	printf("backup in progress \r\n");
-	printf("value of buffeur %s \r\n", buff);
-
-
-
+	printf("Backup in progress \r\n");
+	printf("Buffer value %s \r\n", buff);
 
 	//Save protocole #########################################
 
@@ -152,7 +146,7 @@ void saveSD(){
 		if(f_open(&SDFile, "DATA.CSV", FA_OPEN_APPEND | FA_WRITE) != FR_OK)
 		{
 
-			printf("cannot open SD card\r\n");
+			printf("**ERROR: Cannot open SD card\r\n");
 		}
 
 		else
@@ -162,7 +156,7 @@ void saveSD(){
 			res = f_write(&SDFile, buff, strlen(buff), (void *)&byteswritten);
 			if((byteswritten == 0) || (res != FR_OK))
 			{
-				printf("cannot write to SD card \r\n");
+				printf("**ERROR: Cannot write to SD card \r\n");
 			}
 			else
 			{
@@ -191,7 +185,7 @@ void saveSD(){
 	}
 	else
 	{
-		printf("no card is mounted\r\n");
+		printf("**ERROR: No card is mounted\r\n");
 		memset(buff, 0, sizeof buff);
 		FATFS_UnLinkDriver(SDPath);
 	}

@@ -3,10 +3,10 @@
    our connected WeatherStation.
 
    Licensed under University of Poitiers M1 Connected Objects by TD1 GRP1.
-   Produced by Henintsoa Andrianarivony.
+   Author: Henintsoa Andrianarivony.
  **************************************************************/
 
-#include "Raingauge.h"
+#include <RainGauge.h>
 
 // - Start the timer dedicated to the rain gauge
 void RaingaugeStart(TIM_HandleTypeDef *htim2){
@@ -21,13 +21,13 @@ double captureRainfall(TIM_HandleTypeDef *htim2){
 	__HAL_TIM_SetCounter(htim2,0);
 	//Compute rainfall then display and return it
 	double rainfall = counter * CAPACITY;
-	//displayRainfall(counter, rainfall);
+	//displayRainfall(counter, rainfall); //DEBUG : uncomment the line to debug the sensor
 
 	return rainfall;
 }
 
 // - Monitoring data via UART serial port
-void displayRainfall(long counter, double rainfall) {
+static void displayRainfall(long counter, double rainfall) {
 	printf("====== MONITORING RAIN GAUGE ======\r\n");
 	printf("Counter : %ld \r\n", counter);
 	printf("Rainfall : %f mm\r\n", rainfall);
