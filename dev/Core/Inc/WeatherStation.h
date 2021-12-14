@@ -1,16 +1,20 @@
-/**
-* @author Benjamin Chevais
-* @date 01/12/21
-*/
+/**************************************************************
+   WeatherStation, from WeatherStation library, is available for STM32F746G platform to manage
+   our connected WeatherStation.
 
+   Licensed under University of Poitiers M1 Connected Objects by TD1 GRP1.
+   Author: Benjamin Chevais.
+ **************************************************************/
 
 #ifndef INC_WEATHERSTATION_H_
 #define INC_WEATHERSTATION_H_
 
+/* -------------------- LIBRARIES -------------------- */
 #include <stdio.h>
 
-#define GRAPHICS_SIZE 24 // size of the history arrays
-#define DATA_SIZE 100 // size of the history arrays
+/* ------------------- DECLARATIONS ------------------ */
+#define GRAPHICS_SIZE 24	// size of the history arrays
+#define DATA_SIZE 100	 	// size of the history arrays
 
 // Struct to Store all time and date information
 typedef struct T_Time {
@@ -23,8 +27,8 @@ typedef struct T_Time {
 	uint8_t seconds;
 } T_Time;
 
-T_Time DefaultTime(); // Default Constructor of T_Time
-T_Time getTime(); // Give the date and the time
+T_Time DefaultTime(); 		// Default Constructor of T_Time
+T_Time getTime(); 			// Give the date and the time
 void displayTime(T_Time t); // Display a date
 
 // Definition of a simulated database object
@@ -59,9 +63,9 @@ typedef struct T_DataToSave {
 
 } T_DataToSave;
 
-T_DataToSave DataToSave(); // T_DataToSave constructor
+T_DataToSave DataToSave(); 				// T_DataToSave constructor
 void addDataToSave(T_DataToSave * ds, double temp, double hum, double press, double rain, double wspeed, double wdir, T_Time t); // add all data to save
-void clearBuffers(T_DataToSave* ds); // Clear all the buffers of DataToSave
+void clearBuffers(T_DataToSave* ds); 	// Clear all the buffers of DataToSave
 
 // Definition of the Weather Station object
 typedef struct T_WeatherStation {
@@ -70,7 +74,7 @@ typedef struct T_WeatherStation {
 	double pressure;
 	double rainfall;
 	double wind_speed;
-	double wind_direction; // degrees
+	double wind_direction; // In degree
 	T_Time time;
 } T_WeatherStation;
 

@@ -21,9 +21,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include <DrawFrameGraph.h>
-#include <i2CSensors.h>
-#include <Pressure.h>
-#include <RainGauge.h>
+#include <I2CSensors.h>
 #include "main.h"
 #include "adc.h"
 #include "dma.h"
@@ -41,13 +39,14 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
-#include "WeatherStation.h"
 #include <stdio.h>
 #include <string.h>
-#include <Sd.h>
-#include <Sd.h>
-#include <WindDirection.h>
 #include <WindSpeed.h>
+#include "WeatherStation.h"
+#include "Sd.h"
+#include "Pressure.h"
+#include "RainGauge.h"
+#include "WindDirection.h"
 
 #ifdef __GNUC__
 /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf
@@ -289,7 +288,7 @@ void aggregate() {
 	double pressure = capturePressure();
 	double rainfall = captureRainfall(&htim2);
 	double wspeed = captureWindspeed(&WIND_TICK, DELAY);
-	double wdir = getDirection(HAL_ADC_GetValue(&hadc3));
+	double wdir = captureDirection(HAL_ADC_GetValue(&hadc3));
 
 	T_Time time = getTime();
 	displayTime(time);
